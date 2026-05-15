@@ -12,7 +12,7 @@ class Node {
 
 
 export default class Space {
-    k_m = 0  // жорсткість
+    k_m = 0  // = k/m
     time = 0  // такти часу
     nodes: Node[] = []
     oscillators: Oscillator[] = []
@@ -28,21 +28,21 @@ export default class Space {
             this.nodes[i] = new Node(i);
         }
         // поглиначі
-        // const start = 500, len = 200, d = 0.1/len;
-        // for (let i = 0; i < len; i++) {
-        //     this.nodes[start + i].l = d * i;
-        // }
+        const start = 500, len = 200, d = 0.1/len;
+        for (let i = 0; i < len; i++) {
+            this.nodes[start + i].loss = d * i;
+        }
         
-
-        // осцилятори
-        this.oscillators.push(new Oscillator(250, 0.05, 200));
-
     }
 
     set loss(v: number) {
         for (let i = 0; i < this.nodes.length; i++) {
             this.nodes[i].loss = v;
         }
+    }
+
+    addOsc(o: Oscillator) {
+        this.oscillators.push(o);
     }
 
     step() {

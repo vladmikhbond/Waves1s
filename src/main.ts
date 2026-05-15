@@ -3,8 +3,9 @@ import Space from "./models/space.js";
 import View from "./view/view.js";
 
 
-export const n = 500;      // total area
+export const n = 900;      // total area
 export const n_vis = 500;  // visible middle area
+
 
 const space = createSpace(n);
 const view = new View(space, n_vis); 

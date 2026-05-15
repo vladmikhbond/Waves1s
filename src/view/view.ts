@@ -35,9 +35,9 @@ export default class View {
         ctx.strokeStyle = "red"
         for (let i = (n - this.n_vis) / 2 + 1; i < (n + this.n_vis) / 2; i++) {
             let node = this.space.nodes[i]
-            let x = (i - (n - this.n_vis) / 2) * kx
-
-            let y = (node.x - this.space.nodes[i-1].x - 1) * ky + b    // velo
+            let x = (i - (n - this.n_vis) / 2) * kx;
+            // let y = (node.x - this.space.nodes[i-1].x - 1) * ky + b    // distance
+            let y = node.v * ky + b    // velo
 
             ctx.moveTo(x, b);
             ctx.lineTo(x, y);
