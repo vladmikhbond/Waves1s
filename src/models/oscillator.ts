@@ -1,20 +1,20 @@
-
+// Гармонійний осцилятор
+//
 export default class Oscillator {
     i = 0
-    a = 0    
-    t = 0
-    dt = 0
+    amp = 0    
+    ph = 0   // поточна фаза
+    dph = 0  // приріст фази
     
     constructor(i: number, a: number, p: number = 20) {
         this.i = i;
-        this.a = a;
-        this.dt = 2 * Math.PI / p; 
-        this.t = -this.dt;
-
+        this.amp = a;
+        this.dph = 2 * Math.PI / p; 
+        this.ph = -this.dph;
     }
     
-    next_z() {
-        this.t += this.dt ;
-        return Math.sin(this.t) * this.a;
+    next_a() {
+        this.ph += this.dph ;
+        return Math.sin(this.ph) * this.amp;
     }
 }

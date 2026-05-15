@@ -18,7 +18,7 @@ export default class View {
         const n = this.space.nodes.length
 
         const kx = this.canvas.width / this.n_vis
-        const ky = 30;
+        const ky = 10000;
         const b = this.canvas.height / 2;
         const ctx = this.ctx;
         
@@ -33,11 +33,11 @@ export default class View {
         // vawes
         ctx.beginPath();
         ctx.strokeStyle = "red"
-        for (let i = (n - this.n_vis) / 2 ; i < (n + this.n_vis) / 2; i++) {
+        for (let i = (n - this.n_vis) / 2 + 1; i < (n + this.n_vis) / 2; i++) {
             let node = this.space.nodes[i]
             let x = (i - (n - this.n_vis) / 2) * kx
 
-            let y = -node.v * ky + b    // velo
+            let y = (node.x - this.space.nodes[i-1].x - 1) * ky + b    // velo
 
             ctx.moveTo(x, b);
             ctx.lineTo(x, y);
