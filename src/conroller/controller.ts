@@ -48,7 +48,7 @@ export default class Controller {
         document.getElementById("time")!.innerHTML = this.space.time.toString()
 
         // stop when limit
-        // if (space.nodes[1].v > 0) stop(); 
+        if (this.space.nodes[1].v > 0.0001) stop(); 
     
     }
 

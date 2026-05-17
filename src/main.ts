@@ -4,7 +4,7 @@ import View from "./view/view.js";
 
 
 export const size = 500;      // visible middle area
-export const margin = 200;    // margin
+export const margin = 400;    // margin
 
 
 const space = createSpace(size, margin);
