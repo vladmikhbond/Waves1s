@@ -1,24 +1,25 @@
-import Space from "../models/space_long.js";
-// import Space from "../models/space_cross.js";
+import Space from "../models/space.js";
 
 export default class View {
     space: Space
     canvas: HTMLCanvasElement
     ctx: CanvasRenderingContext2D
-    n_vis: number
+  
 
-    constructor(space: Space, n_vis: number) {
+    constructor(space: Space) {
         this.space = space;
         this.canvas = (document.getElementById("canvas") as HTMLCanvasElement)!;
         this.ctx = this.canvas.getContext("2d")!;
-        this.n_vis = n_vis;
     }
 
     show() {
 
-        const n = this.space.nodes.length
-
-        const kx = this.canvas.width / this.n_vis
+        const n = this.space.n;
+        const beg = this.space.margin;
+        const end = this.space.margin + this.space.size;
+        const x_scale = this.canvas.width / this.space.size;
+        const v_scale = 10000;
+        const s_scale = 1000;
 
         const b = this.canvas.height / 2;
         const ctx = this.ctx;
@@ -32,26 +33,34 @@ export default class View {
         }
         ctx.stroke();
 
-        // vawes
-        ctx.beginPath();
+        // velo vawes
         ctx.strokeStyle = "red"
-
-        for (let i = (n - this.n_vis) / 2 ; i < (n + this.n_vis) / 2; i++) {
+        ctx.beginPath();
+        for (let i = beg ; i < end; i++) {
             let node = this.space.nodes[i]
-            let x = (i - (n - this.n_vis) / 2) * kx
+            let x = (i - beg) * x_scale
 
-            // // -cross
-            // const ky = 10000;
-            // let y = node.x * ky + b
 
-            // -long
-            const ky = 10000;
-            let y = node.v * ky + b    // velo
+            let yv = node.v * v_scale + b    // velo
+            let ys = node.s * s_scale + b    // shift
             
-            ctx.lineTo(x, y);
+            ctx.lineTo(x, yv);
         }
-
         ctx.stroke();
+
+        // shift vawes
+        ctx.strokeStyle = "blue"
+        ctx.beginPath();
+        for (let i = beg ; i < end; i++) {
+            let node = this.space.nodes[i]
+            let x = (i - beg) * x_scale
+            let yv = node.v * v_scale + b    // velo
+            let ys = node.s * s_scale + b    // shift
+            
+            ctx.lineTo(x, ys);
+        }
+        ctx.stroke();
+
     }
 
 

@@ -1,6 +1,5 @@
 import Oscillator from "../models/oscillator.js";
-import Space from "../models/space_long.js";
-//import Space from "../models/space_cross.js";
+import Space from "../models/space.js";
 import View from "../view/view.js";
 
 let timer: ReturnType<typeof setInterval> | 0 = 0;
@@ -17,7 +16,7 @@ export default class Controller {
 
         
         // осцилятори
-        let mid = space.nodes.length/2 | 0;
+        let mid = space.n / 2 | 0;
         space.addOsc(new Oscillator(mid, 0.05, 200));
 
        document.getElementById("resetButton")!.addEventListener("click", () => {
@@ -29,12 +28,14 @@ export default class Controller {
         });
 
         document.getElementById("runButton")!.addEventListener("click", () => {
-            if (timer) this.stop(); 
-            else this.run();
+            if (timer) 
+                this.stop(); 
+            else 
+                this.run();
         });
 
         document.addEventListener("keydown", (e: KeyboardEvent) => {
-            if (e.key == " ") {
+            if (e.key == "s" || e.key == "і" ) {
                 stop();
                 this.step();
             }

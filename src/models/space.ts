@@ -1,0 +1,83 @@
+import Oscillator from "./oscillator.js"
+
+class Node {
+    s = 0  // shift 
+    v = 0  // velo
+    loss = 0
+    is_stone = false
+}
+
+
+export default class Space {
+    size: number 
+    margin: number
+    k_m = 0   // = k/m
+    time = 0  // такти часу
+    nodes: Node[] = []
+    oscillators: Oscillator[] = []
+
+
+    constructor(size: number, margin: number, k_m: number, loss: number) {
+        this.size = size;
+        this.margin = margin;
+
+        this.k_m = k_m;
+        this.loss = loss;
+        
+
+        // вузли
+        this.nodes = new Array(this.n);
+        for (let i = 0; i < this.n; i++) {
+            this.nodes[i] = new Node();
+        }
+        // поглиначі
+        const d = 0.1/size;
+        for (let i = 0; i < margin; i++) {
+            this.nodes[i].loss = d * (margin - i);
+            this.nodes[margin + size + i].loss = d * i;
+        }  
+    }
+
+    get n() {
+        return this.size + this.margin * 2;
+    }
+
+
+    set loss(v: number) {
+        for (let i = 0; i < this.nodes.length; i++) {
+            this.nodes[i].loss = v;
+        }
+    }
+
+    addOsc(o: Oscillator) {
+        this.oscillators.push(o);
+    }
+
+
+    step() {
+        const n = this.n;
+        // швидкості
+        for (let i = 1; i < n - 1; i++) {
+            let dz = this.nodes[i+1].s + this.nodes[i-1].s 
+                - 2 * this.nodes[i].s ;
+
+            let a = this.k_m * dz;
+            this.nodes[i].v += a;           
+            // втрати
+            this.nodes[i].v *= (1 - this.nodes[i].loss);
+        }
+        // зміщення
+        for (let i = 1; i < n - 1; i++) {
+            if (!this.nodes[i].is_stone) 
+                this.nodes[i].s += this.nodes[i].v;
+        }
+
+        // осцилятори
+        for (let o of this.oscillators) {
+            this.nodes[o.i].s += o.next_a();
+        }
+    
+        this.time++;
+    }
+
+}
