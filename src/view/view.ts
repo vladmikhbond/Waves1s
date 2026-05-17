@@ -1,5 +1,5 @@
-// import Space from "../models/space_long.js";
-import Space from "../models/space_cross.js";
+import Space from "../models/space_long.js";
+// import Space from "../models/space_cross.js";
 
 export default class View {
     space: Space
@@ -40,13 +40,13 @@ export default class View {
             let node = this.space.nodes[i]
             let x = (i - (n - this.n_vis) / 2) * kx
 
-            // -cross
-            const ky = 3000;
-            let y = -node.x * ky + b
-
-            // // -long
+            // // -cross
             // const ky = 10000;
-            // let y = node.v * ky + b    // velo
+            // let y = node.x * ky + b
+
+            // -long
+            const ky = 10000;
+            let y = node.v * ky + b    // velo
             
             ctx.lineTo(x, y);
         }

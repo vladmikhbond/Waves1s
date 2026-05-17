@@ -5,9 +5,6 @@ class Node {
     v = 0  // velo
     loss = 0
 
-    constructor(x: number) {
-        this.x = x;
-    }
 }
 
 
@@ -25,7 +22,7 @@ export default class Space {
         // вузли
         this.nodes = new Array(n);
         for (let i = 0; i < n; i++) {
-            this.nodes[i] = new Node(0);
+            this.nodes[i] = new Node();
         }
         // поглиначі
         const start = 500, len = 200, d = 0.1/len;
