@@ -1,5 +1,6 @@
 import Oscillator from "../models/oscillator.js";
-import Space from "../models/space.js";
+// import Space from "../models/space_long.js";
+import Space from "../models/space_cross.js";
 import View from "../view/view.js";
 
 let timer: ReturnType<typeof setInterval> | 0 = 0;

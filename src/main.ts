@@ -1,5 +1,6 @@
 import Controller from "./conroller/controller.js";
-import Space from "./models/space.js";
+import Space from "./models/space_cross.js";
+// import Space from "./models/space_long.js";
 import View from "./view/view.js";
 
 
