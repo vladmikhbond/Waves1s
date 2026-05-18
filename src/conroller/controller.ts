@@ -1,4 +1,4 @@
-import Oscillator from "../models/oscillator.js";
+import {Oscillator, Meander, Pulse} from "../models/oscillator.js";
 import Space from "../models/space.js";
 import View from "../view/view.js";
 
@@ -15,9 +15,10 @@ export default class Controller {
         this.view = view;
 
         
-        // осцилятори
+        // ==== осцилятори
         let mid = space.n / 2 | 0;
-        space.addOsc(new Oscillator(mid, 0.05, 200));
+        space.addOsc(new Pulse(mid, 10, 200));
+        // ===============
 
        document.getElementById("resetButton")!.addEventListener("click", () => {
             let k_m = +(document.getElementById("k_m") as HTMLInputElement)!.value;

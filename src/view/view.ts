@@ -15,9 +15,13 @@ export default class View {
     show() {
 
         const n = this.space.n;
-        const beg = this.space.margin;
-        const end = this.space.margin + this.space.size;
-        const x_scale = this.canvas.width / this.space.size;
+        
+        // const beg = this.space.margin;
+        // const end = this.space.margin + this.space.size;
+        const beg = 0;
+        const end = 2 * this.space.margin + this.space.size;
+
+
         const v_scale = 10000;
         const s_scale = 1000;
 
@@ -37,12 +41,12 @@ export default class View {
         ctx.strokeStyle = "red"
         ctx.beginPath();
         for (let i = beg ; i < end; i++) {
-            let node = this.space.nodes[i]
-            let x = (i - beg) * x_scale
+            let node = this.space.nodes[i];
+            let x = i - beg;
 
 
-            let yv = node.v * v_scale + b    // velo
-            let ys = node.s * s_scale + b    // shift
+            let yv = node.v * v_scale + b;    // velo
+            let ys = node.s * s_scale + b;    // shift
             
             ctx.lineTo(x, yv);
         }
@@ -53,9 +57,9 @@ export default class View {
         ctx.beginPath();
         for (let i = beg ; i < end; i++) {
             let node = this.space.nodes[i]
-            let x = (i - beg) * x_scale
-            let yv = node.v * v_scale + b    // velo
-            let ys = node.s * s_scale + b    // shift
+            let x = i - beg;
+            let yv = node.v * v_scale + b;    // velo
+            let ys = node.s * s_scale + b;    // shift
             
             ctx.lineTo(x, ys);
         }

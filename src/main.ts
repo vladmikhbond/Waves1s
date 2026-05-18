@@ -3,12 +3,16 @@ import Space from "./models/space.js";
 import View from "./view/view.js";
 
 
-export const size = 500;      // visible middle area
-export const margin = 400;    // margin
+export const size = 500;      // work area
+export const margin = 200;    // margin
+const canvas = (document.getElementById("canvas") as HTMLCanvasElement)!;
+canvas.width = size + 2 * margin;
+canvas.height = size;
 
 
 const space = createSpace(size, margin);
 const view = new View(space); 
+
 // left reflector
 // space.nodes[margin].is_stone = true;
 

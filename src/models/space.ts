@@ -1,4 +1,4 @@
-import Oscillator from "./oscillator.js"
+import {Oscillator} from "./oscillator.js"
 
 class Node {
     s = 0  // shift 
@@ -20,34 +20,35 @@ export default class Space {
     constructor(size: number, margin: number, k_m: number, loss: number) {
         this.size = size;
         this.margin = margin;
-
-        this.k_m = k_m;
-        this.loss = loss;
-        
-
-        // вузли
+        // вузли (спершу)
         this.nodes = new Array(this.n);
         for (let i = 0; i < this.n; i++) {
             this.nodes[i] = new Node();
         }
-        // поглиначі
-        const d = 0.1/size;
-        for (let i = 0; i < margin; i++) {
-            this.nodes[i].loss = d * (margin - i);
-            this.nodes[margin + size + i].loss = d * i;
-        }  
+        this.k_m = k_m;
+        this.loss = loss;
     }
 
     get n() {
         return this.size + this.margin * 2;
     }
 
-
     set loss(v: number) {
-        for (let i = 0; i < this.nodes.length; i++) {
+        for (let i = this.margin; i < this.margin + this.size; i++) {
             this.nodes[i].loss = v;
         }
+        this.setAbsorbers();
     }
+
+
+    setAbsorbers() {
+        const d = 0.1/this.size;
+        for (let i = 0; i < this.margin; i++) {
+            this.nodes[i].loss = d * (this.margin - i);
+            this.nodes[this.margin + this.size + i].loss = d * i;
+        }  
+    }
+
 
     addOsc(o: Oscillator) {
         this.oscillators.push(o);
