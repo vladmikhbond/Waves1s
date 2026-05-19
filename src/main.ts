@@ -20,6 +20,7 @@ const view = new View(space);
 //space.nodes[margin + size].is_stone = true;
 
 new Controller(space, view);
+view.show();
 
 // ----------------------------------------------------------
 

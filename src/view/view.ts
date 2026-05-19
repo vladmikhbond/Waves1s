@@ -43,12 +43,8 @@ export default class View {
         for (let i = beg ; i < end; i++) {
             let node = this.space.nodes[i];
             let x = i - beg;
-
-
-            let yv = node.v * v_scale + b;    // velo
-            let ys = node.s * s_scale + b;    // shift
-            
-            ctx.lineTo(x, yv);
+            let y = node.v * v_scale + b;    // velo
+            ctx.lineTo(x, y);
         }
         ctx.stroke();
 
@@ -58,12 +54,20 @@ export default class View {
         for (let i = beg ; i < end; i++) {
             let node = this.space.nodes[i]
             let x = i - beg;
-            let yv = node.v * v_scale + b;    // velo
-            let ys = node.s * s_scale + b;    // shift
-            
-            ctx.lineTo(x, ys);
+            let y = node.s * s_scale + b;    // shift
+            ctx.lineTo(x, y);
         }
         ctx.stroke();
+
+        // осцилятори
+        ctx.fillStyle = "green";
+        for (let o of this.space.oscillators) {
+            let x = o.i - beg;
+            let y = this.space.nodes[o.i].s * s_scale + b; 
+            ctx.fillRect(x-3, y-3, 6, 6);
+        }
+
+
 
     }
 

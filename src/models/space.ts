@@ -57,6 +57,19 @@ export default class Space {
 
     step() {
         const n = this.n;
+
+        // зміщення
+        for (let i = 1; i < n - 1; i++) {
+            if (!this.nodes[i].is_stone) 
+                this.nodes[i].s += this.nodes[i].v;
+        }
+
+        // осцилятори
+        for (let o of this.oscillators) {
+            this.nodes[o.i].s += o.next_s();
+            // this.nodes[o.i].v = 0;
+        }
+    
         // швидкості
         for (let i = 1; i < n - 1; i++) {
             let dz = this.nodes[i+1].s + this.nodes[i-1].s 
@@ -67,17 +80,7 @@ export default class Space {
             // втрати
             this.nodes[i].v *= (1 - this.nodes[i].loss);
         }
-        // зміщення
-        for (let i = 1; i < n - 1; i++) {
-            if (!this.nodes[i].is_stone) 
-                this.nodes[i].s += this.nodes[i].v;
-        }
 
-        // осцилятори
-        for (let o of this.oscillators) {
-            this.nodes[o.i].s += o.next_a();
-        }
-    
         this.time++;
     }
 

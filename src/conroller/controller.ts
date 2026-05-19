@@ -1,4 +1,4 @@
-import {Oscillator, Meander, Pulse} from "../models/oscillator.js";
+import {Oscillator, Mono, Meander, Pulse} from "../models/oscillator.js";
 import Space from "../models/space.js";
 import View from "../view/view.js";
 
@@ -16,8 +16,8 @@ export default class Controller {
 
         
         // ==== осцилятори
-        let mid = space.n / 2 | 0;
-        space.addOsc(new Pulse(mid, 10, 200));
+        // let mid = space.n / 2 | 0;
+        // space.addOsc(new Pulse(mid, 10, 200));
         // ===============
 
        document.getElementById("resetButton")!.addEventListener("click", () => {
@@ -41,6 +41,16 @@ export default class Controller {
                 this.step();
             }
         });
+
+        document.getElementById("canvas")!.addEventListener("mousedown", (e: MouseEvent) => {
+           let x = e.offsetX;
+           // set new oscillator
+           let ampl = +(document.getElementById("oscill_ampl")! as HTMLInputElement).value;
+           let period = +(document.getElementById("oscill_period")! as HTMLInputElement).value;
+           this.space.addOsc(new Mono(x, ampl, period, this.space));
+           this.view.show();
+        });
+
     }
     
     step() {
@@ -49,8 +59,8 @@ export default class Controller {
         document.getElementById("time")!.innerHTML = this.space.time.toString()
 
         // stop when limit
-        if (this.space.nodes[1].v > 0.0001) stop(); 
-    
+        if (this.space.nodes[1].v > 0.0001)
+            stop(); 
     }
 
     stop() {
@@ -61,10 +71,9 @@ export default class Controller {
     }
     
     run() {
-        if (timer) return;
-        timer = setInterval(() => { 
-            this.step();
-        }, 10);
+        if (timer) 
+            return;
+        timer = setInterval(() => this.step(), 10);
     }
 
 }
