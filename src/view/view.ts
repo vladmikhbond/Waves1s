@@ -10,6 +10,19 @@ export default class View {
         this.space = space;
         this.canvas = (document.getElementById("canvas") as HTMLCanvasElement)!;
         this.ctx = this.canvas.getContext("2d")!;
+        this.backgroundPrepare();
+    }
+
+    backgroundPrepare() {
+        let canvasBG = (document.getElementById("canvasBG") as HTMLCanvasElement)!;
+        let ctx = canvasBG.getContext("2d")!;
+        // grid
+        ctx.beginPath();
+        ctx.strokeStyle = "gray";        
+        for (let x = 0; x < this.canvas.width; x += 100) {
+            ctx.moveTo(x, 0); ctx.lineTo(x, this.canvas.height); 
+        }
+        ctx.stroke();
     }
 
     show() {
@@ -22,20 +35,13 @@ export default class View {
         const end = 2 * this.space.margin + this.space.size;
 
 
-        const v_scale = 10000;
-        const s_scale = 1000;
+        const velo_scale = 100;
+        const shift_scale = 10;
 
         const b = this.canvas.height / 2;
         const ctx = this.ctx;
         
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        // grid
-        ctx.beginPath();
-        ctx.strokeStyle = "gray";        
-        for (let x = 0; x < this.canvas.width; x += 100) {
-            ctx.moveTo(x, 0); ctx.lineTo(x, this.canvas.height); 
-        }
-        ctx.stroke();
 
         // velo vawes
         ctx.strokeStyle = "red"
@@ -43,7 +49,7 @@ export default class View {
         for (let i = beg ; i < end; i++) {
             let node = this.space.nodes[i];
             let x = i - beg;
-            let y = node.v * v_scale + b;    // velo
+            let y = node.v * velo_scale + b;    // velo
             ctx.lineTo(x, y);
         }
         ctx.stroke();
@@ -54,7 +60,7 @@ export default class View {
         for (let i = beg ; i < end; i++) {
             let node = this.space.nodes[i]
             let x = i - beg;
-            let y = node.s * s_scale + b;    // shift
+            let y = node.s * shift_scale + b;    // shift
             ctx.lineTo(x, y);
         }
         ctx.stroke();
@@ -63,7 +69,7 @@ export default class View {
         ctx.fillStyle = "green";
         for (let o of this.space.oscillators) {
             let x = o.i - beg;
-            let y = this.space.nodes[o.i].s * s_scale + b; 
+            let y = this.space.nodes[o.i].s * shift_scale + b; 
             ctx.fillRect(x-3, y-3, 6, 6);
         }
 

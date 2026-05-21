@@ -4,6 +4,11 @@ import View from "../view/view.js";
 
 let timer: ReturnType<typeof setInterval> | 0 = 0;
 
+enum State {
+    Inf, Osc, Mon, Sto, Del
+}
+
+
 export default class Controller {
 
     space: Space
@@ -14,18 +19,10 @@ export default class Controller {
         this.space = space;
         this.view = view;
 
-        
-        // ==== осцилятори
-        // let mid = space.n / 2 | 0;
-        // space.addOsc(new Pulse(mid, 10, 200));
-        // ===============
-
-       document.getElementById("resetButton")!.addEventListener("click", () => {
-            let k_m = +(document.getElementById("k_m") as HTMLInputElement)!.value;
-            let loss = +(document.getElementById("l") as HTMLInputElement)!.value;
-
-            this.space.k_m = k_m;
-            this.space.loss = loss;
+        document.getElementById("resetButton")!.addEventListener("click", () => {
+            this.stop();
+            this.space.calm();
+            this.view.show();
         });
 
         document.getElementById("runButton")!.addEventListener("click", () => {
@@ -43,15 +40,48 @@ export default class Controller {
         });
 
         document.getElementById("canvas")!.addEventListener("mousedown", (e: MouseEvent) => {
-           let x = e.offsetX;
-           // set new oscillator
-           let ampl = +(document.getElementById("oscill_ampl")! as HTMLInputElement).value;
-           let period = +(document.getElementById("oscill_period")! as HTMLInputElement).value;
-           this.space.addOsc(new Mono(x, ampl, period, this.space));
-           this.view.show();
+            let x = e.offsetX;
+
+            // set new oscillator
+            let ampl = +(document.getElementById("oscill_ampl")! as HTMLInputElement).value;
+            let period = +(document.getElementById("oscill_period")! as HTMLInputElement).value;
+            switch (this.state) {
+                case State.Osc:
+                    this.space.addOsc(new Oscillator(x, ampl, period));
+                    break;
+                case State.Mon:
+                    this.space.addOsc(new Mono(x, ampl, period, this.space));
+                    break;
+                case State.Sto: 
+                    this.space.nodes[x].is_stone = true;
+            }
+            this.view.show();
+        });
+
+        document.getElementById("k_m")!.addEventListener("change", () => {
+            let k_m = +(document.getElementById("k_m") as HTMLInputElement)!.value;
+            this.space.k_m = k_m;
+        });
+
+        document.getElementById("k_m")!.addEventListener("change", () => {
+            let loss = +(document.getElementById("l") as HTMLInputElement)!.value;        
+            this.space.loss = loss;
         });
 
     }
+
+    get state(): State 
+    {
+        const stateElem = document.getElementById("state") as HTMLInputElement;
+        switch(stateElem.value) {
+            case "Osc": return State.Osc;
+            case "Sto": return State.Sto;
+            case "Mon": return State.Mon;
+            case "Del": return State.Del;
+            default: return State.Inf;           
+        }       
+    }
+
     
     step() {
         this.space.step();  

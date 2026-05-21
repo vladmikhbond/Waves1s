@@ -1,6 +1,6 @@
 
 вимикати швидкості ( чекбокс)
-додавати камені і осцилятори 
-два канваси 
+відобразити камені
+градієнт на фоні
 
-анімація   https://www.acs.psu.edu/drussell/demos.html
+анімація коливань і волн https://www.acs.psu.edu/drussell/demos.html

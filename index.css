@@ -1,4 +1,23 @@
-canvas {
-    border: thin solid gray;
-    /* width: 2600px; */
+#state {
+    display: inline;
+    width: 120px;
+}
+
+.canvas-frame {
+    position: relative;
+} 
+
+#canvas,
+#canvasBG {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+}
+
+#canvas {
+    z-index: 2;
+}
+#canvasBG {
+    z-index: 1;
 }

@@ -27,6 +27,7 @@ export default class Space {
         }
         this.k_m = k_m;
         this.loss = loss;
+        this.setAbsorbers();
     }
 
     get n() {
@@ -37,9 +38,18 @@ export default class Space {
         for (let i = this.margin; i < this.margin + this.size; i++) {
             this.nodes[i].loss = v;
         }
-        this.setAbsorbers();
     }
 
+    calm() {
+        for (let node of this.nodes) {
+            node.v = 0;
+            node.s = 0;            
+        } 
+
+        for (let osc of this.oscillators) {
+            osc.ph = 0;
+        }
+    }
 
     setAbsorbers() {
         const d = 0.1/this.size;

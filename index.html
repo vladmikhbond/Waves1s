@@ -11,18 +11,32 @@
     <main class="container">
         <h1>Vawes1s</h1>
         <div>
-            k/m: <input id="k_m" value="0.05" style="width: 100px;">
-            loss: <input id="l" value="0.0" style="width: 100px;">
+            k/m: <input id="k_m" value=".05" style="width: 100px;">
+            loss: <input id="l" value=".0" style="width: 100px;">
+            
+            <select id="state" aria-label="Select" required>
+                <option value="Inf" selected >Inf</option>
+                <option value="Sto">Sto</option>
+                <option value="Osc">Osc</option>
+                <option value="Mon">Mon</option>
+                <option value="Del">Del</option>
+            </select>
+
+            <input id="oscill_ampl" value="5" style="width: 80px;" title="амплитуда">
+            <input id="oscill_period" value="200" style="width: 80px;" title="період ">
 
             <button id="resetButton">Reset</button>
             <button id="runButton">Run</button>
+
             <span id="params"></span>
-            <span id="time"></span>
-            Osc:
-            <input id="oscill_ampl" value="0.05" style="width: 80px;" title="амплитуда">
-            <input id="oscill_period" value="200" style="width: 80px;" title="період ">
+            <span id="time"></span>            
         </div>
-        <canvas id="canvas"></canvas>
+
+        <div class="canvas-frame">
+            <canvas id="canvas"></canvas>
+            <canvas id="canvasBG" ></canvas>
+        </div>
+
     </main>
     <script type="module" src="dist/main.js"></script>
 </body>
