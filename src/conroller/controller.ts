@@ -42,9 +42,9 @@ export default class Controller {
         document.getElementById("canvas")!.addEventListener("mousedown", (e: MouseEvent) => {
             let x = e.offsetX;
 
-            // set new oscillator
             let ampl = +(document.getElementById("oscill_ampl")! as HTMLInputElement).value;
             let period = +(document.getElementById("oscill_period")! as HTMLInputElement).value;
+
             switch (this.state) {
                 case State.Osc:
                     this.space.addOsc(new Oscillator(x, ampl, period));
@@ -58,18 +58,20 @@ export default class Controller {
             this.view.show();
         });
 
-        document.getElementById("k_m")!.addEventListener("change", () => {
-            let k_m = +(document.getElementById("k_m") as HTMLInputElement)!.value;
+        document.getElementById("k_m")!.addEventListener("change", (e) => {
+            let k_m = +(e.target as HTMLInputElement).value;
             this.space.k_m = k_m;
         });
 
-        document.getElementById("k_m")!.addEventListener("change", () => {
-            let loss = +(document.getElementById("l") as HTMLInputElement)!.value;        
+        document.getElementById("loss")!.addEventListener("change", (e) => {
+            let loss = +(e.target as HTMLInputElement).value;       
             this.space.loss = loss;
         });
 
     }
 
+    // ---------------- Props -------------------
+    
     get state(): State 
     {
         const stateElem = document.getElementById("state") as HTMLInputElement;
@@ -82,7 +84,8 @@ export default class Controller {
         }       
     }
 
-    
+    // ------------------- Metods -------------------
+
     step() {
         this.space.step();  
         this.view.show();
