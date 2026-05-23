@@ -54,6 +54,10 @@ export default class Controller {
                     break;
                 case State.Sto: 
                     this.space.nodes[x].is_stone = true;
+                    break;
+                case State.Del: 
+                    this.space.delOscAt(x);
+                    break;
             }
             this.view.show();
         });
@@ -68,6 +72,9 @@ export default class Controller {
             this.space.loss = loss;
         });
 
+        document.getElementById("lis_velo_visible")!.addEventListener("change", (e) => {
+            this.view.show();
+        });
     }
 
     // ---------------- Props -------------------

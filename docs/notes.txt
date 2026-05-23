@@ -2,5 +2,8 @@
 вимикати швидкості ( чекбокс)
 відобразити камені
 
+підручники (vpn)
+https://fizikaguap.ru/wp-content/uploads/2021/04/phys52016-disp.pdf
+https://sfiz.ru/materials/kolobaniya/
 
 анімація коливань і волн https://www.acs.psu.edu/drussell/demos.html

@@ -11,24 +11,24 @@
     <main class="container">
         <h1>Vawes1s</h1>
         <div>
-            k/m: <input id="k_m" value=".05" style="width: 100px;">
+            k/m: <input id="k_m" value=".01" style="width: 100px;">
             loss: <input id="loss" value=".0" style="width: 100px;">
             
             <select id="state" aria-label="Select" required>
-                <option value="Inf" selected >Inf</option>
+                <option value="Inf" >Inf</option>
                 <option value="Sto">Sto</option>
-                <option value="Osc">Osc</option>
+                <option value="Osc" selected >Osc</option>
                 <option value="Mon">Mon</option>
                 <option value="Del">Del</option>
             </select>
 
-            <input id="oscill_ampl" value="5" style="width: 80px;" title="амплитуда">
-            <input id="oscill_period" value="200" style="width: 80px;" title="період ">
+            <input id="oscill_ampl" value="1" style="width: 80px;" title="амплитуда">
+            <input id="oscill_period" value="63" style="width: 80px;" title="період ">
 
             <button id="resetButton">Reset</button>
             <button id="runButton">Run</button>
 
-            <input type="checkbox" id="is_velo_visible" checked title="Is velo visible."/>
+            <input type="checkbox" id="is_velo_visible" title="Is velo visible."/>
 
 
             <!-- <span id="params"></span> -->

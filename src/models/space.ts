@@ -45,10 +45,10 @@ export default class Space {
             node.v = 0;
             node.s = 0;            
         } 
-
         for (let osc of this.oscillators) {
             osc.ph = 0;
         }
+        this.time = 0;
     }
 
     setAbsorbers() {
@@ -64,6 +64,14 @@ export default class Space {
         this.oscillators.push(o);
     }
 
+    delOscAt(i: number) {
+        for (let k = 0; k < this.oscillators.length; k++) {
+            if (Math.abs(this.oscillators[k].i - i) < 3) {
+                this.oscillators.splice(k, 1);
+                return;
+            }
+        }
+    }
 
     step() {
         const n = this.n;
