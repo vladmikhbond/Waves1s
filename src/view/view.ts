@@ -50,7 +50,7 @@ export default class View {
     show() 
     {
         const velo_scale = 100;
-        const shift_scale = 10;
+        const shift_scale = 100;
 
         const end = 2 * this.space.margin + this.space.size;
         const b = this.canvas.height / 2;

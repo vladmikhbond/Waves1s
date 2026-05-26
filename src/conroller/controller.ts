@@ -1,4 +1,4 @@
-import {Oscillator, Mono, Meander, Pulse} from "../models/oscillator.js";
+import {Oscillator, Mono, Pulse} from "../models/oscillator.js";
 import Space from "../models/space.js";
 import View from "../view/view.js";
 
@@ -40,17 +40,24 @@ export default class Controller {
         });
 
         document.getElementById("canvas")!.addEventListener("mousedown", (e: MouseEvent) => {
+
             let x = e.offsetX;
 
             let ampl = +(document.getElementById("oscill_ampl")! as HTMLInputElement).value;
-            let period = +(document.getElementById("oscill_period")! as HTMLInputElement).value;
+            let q = +(document.getElementById("oscill_q")! as HTMLInputElement).value;
+
+            if (e.button == 2) {
+                this.space.delOscAt(x);
+                this.view.show();
+                return;
+            }
 
             switch (this.state) {
                 case State.Osc:
-                    this.space.addOsc(new Oscillator(x, ampl, period));
+                    this.space.addOsc(new Oscillator(x, ampl, q, this.space));
                     break;
                 case State.Mon:
-                    this.space.addOsc(new Mono(x, ampl, period, this.space));
+                    this.space.addOsc(new Mono(x, ampl, q, this.space));
                     break;
                 case State.Sto: 
                     this.space.nodes[x].is_stone = true;
@@ -91,7 +98,7 @@ export default class Controller {
         }       
     }
 
-    // ------------------- Metods -------------------
+    // ------------------- Methods -------------------
 
     step() {
         this.space.step();  
