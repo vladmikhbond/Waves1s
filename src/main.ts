@@ -4,7 +4,7 @@ import View from "./view/view.js";
 
 
 export const size = 900;      // work area
-export const margin = 200;    // margin
+export const margin = 0;    // margin
 const canvas = (document.getElementById("canvas") as HTMLCanvasElement)!;
 const canvasBG = (document.getElementById("canvasBG") as HTMLCanvasElement)!;
 canvas.width = canvasBG.width = size + 2 * margin;

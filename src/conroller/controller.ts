@@ -79,7 +79,7 @@ export default class Controller {
             this.space.loss = loss;
         });
 
-        document.getElementById("lis_velo_visible")!.addEventListener("change", (e) => {
+        document.getElementById("is_velo_visible")!.addEventListener("change", (e) => {
             this.view.show();
         });
     }

@@ -20,7 +20,7 @@ export default class Space {
     constructor(size: number, margin: number, k_m: number, loss: number) {
         this.size = size;
         this.margin = margin;
-        // вузли (спершу)
+        // спершу створити вузли
         this.nodes = new Array(this.n);
         for (let i = 0; i < this.n; i++) {
             this.nodes[i] = new Node();
@@ -34,9 +34,9 @@ export default class Space {
         return this.size + this.margin * 2;
     }
 
-    set loss(v: number) {
+    set loss(val: number) {
         for (let i = this.margin; i < this.margin + this.size; i++) {
-            this.nodes[i].loss = v;
+            this.nodes[i].loss = val;
         }
     }
 
@@ -51,7 +51,7 @@ export default class Space {
         this.time = 0;
     }
 
-    setAbsorbers() {
+    setAbsorbers() {         
         const d = 0.1/this.size;
         for (let i = 0; i < this.margin; i++) {
             this.nodes[i].loss = d * (this.margin - i);
@@ -78,8 +78,9 @@ export default class Space {
 
         // зміщення
         for (let i = 1; i < n - 1; i++) {
-            if (!this.nodes[i].is_stone) 
+            if (!this.nodes[i].is_stone) {
                 this.nodes[i].s += this.nodes[i].v;
+            }
         }
 
         // осцилятори
@@ -90,14 +91,29 @@ export default class Space {
     
         // швидкості
         for (let i = 1; i < n - 1; i++) {
-            let dz = this.nodes[i+1].s + this.nodes[i-1].s 
+            let s = this.nodes[i+1].s + this.nodes[i-1].s 
                 - 2 * this.nodes[i].s ;
 
-            let a = this.k_m * dz;
-            this.nodes[i].v += a;           
+            let a = this.k_m * s;
+            this.nodes[i].v += a;
+              
+            if (i == this.margin) {
+                console.log(this.nodes[i].s)
+            }
+
             // втрати
             this.nodes[i].v *= (1 - this.nodes[i].loss);
+ 
+            if (i == this.margin) {
+                console.log(this.nodes[i].s)
+            }
         }
+        // поглиначі
+        let i = this.size - 100;
+        this.nodes[i].v = -(this.k_m**0.5)*(this.nodes[i].s - this.nodes[i - 1].s)
+        i = 100;
+        this.nodes[i].v = -(this.k_m**0.5)*(this.nodes[i].s - this.nodes[i + 1].s)
+
 
         this.time++;
     }
