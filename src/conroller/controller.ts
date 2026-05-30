@@ -1,11 +1,12 @@
 import {Oscillator, Mono, Pulse} from "../models/oscillator.js";
 import Space from "../models/space.js";
 import View from "../view/view.js";
+import { scale } from "../view/view.js";
 
 let timer: ReturnType<typeof setInterval> | 0 = 0;
 
 enum State {
-    Inf, Osc, Mon, Sto, Del
+    Inf, Osc, Mon, Pul, Sto, Del
 }
 
 
@@ -19,7 +20,7 @@ export default class Controller {
         this.space = space;
         this.view = view;
 
-        document.getElementById("resetButton")!.addEventListener("click", () => {
+        document.getElementById("calmButton")!.addEventListener("click", () => {
             this.stop();
             this.space.calm();
             this.view.show();
@@ -53,11 +54,17 @@ export default class Controller {
             }
 
             switch (this.state) {
+                case State.Inf:
+                    this.view.showNode(x);
+                    break;
                 case State.Osc:
                     this.space.addOsc(new Oscillator(x, ampl, q, this.space));
                     break;
                 case State.Mon:
                     this.space.addOsc(new Mono(x, ampl, q, this.space));
+                    break;
+                case State.Pul:
+                    this.space.addOsc(new Pulse(x, ampl, q, this.space));
                     break;
                 case State.Sto: 
                     this.space.nodes[x].is_stone = true;
@@ -82,6 +89,24 @@ export default class Controller {
         document.getElementById("is_velo_visible")!.addEventListener("change", (e) => {
             this.view.show();
         });
+
+        document.getElementById("s_range")!.addEventListener("change", (e) => {
+            scale.shift = +(e.target as HTMLInputElement).value;
+            this.view.show();
+        });
+
+        document.getElementById("v_range")!.addEventListener("change", (e) => {
+            scale.velo = +(e.target as HTMLInputElement).value;
+            this.view.show();
+        });
+
+        document.getElementById("state")!.addEventListener("change", (e) => {
+            let b = this.state == State.Osc || this.state == State.Mon || this.state == State.Pul;
+            (document.getElementById("oscill_ampl") as HTMLSelectElement).disabled = !b;
+            b = this.state == State.Osc || this.state == State.Mon;
+            (document.getElementById("oscill_q") as HTMLSelectElement).disabled = !b;
+        });
+
     }
 
     // ---------------- Props -------------------
@@ -93,6 +118,7 @@ export default class Controller {
             case "Osc": return State.Osc;
             case "Sto": return State.Sto;
             case "Mon": return State.Mon;
+            case "Pul": return State.Pul;
             case "Del": return State.Del;
             default: return State.Inf;           
         }       

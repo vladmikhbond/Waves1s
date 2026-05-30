@@ -2,13 +2,12 @@ import Controller from "./conroller/controller.js";
 import Space from "./models/space.js";
 import View from "./view/view.js";
 
-
-export const size = 900;      // work area
+export const size = 1000;      // work area
 export const margin = 0;    // margin
 const canvas = (document.getElementById("canvas") as HTMLCanvasElement)!;
 const canvasBG = (document.getElementById("canvasBG") as HTMLCanvasElement)!;
 canvas.width = canvasBG.width = size + 2 * margin;
-canvas.height = canvasBG.height = size;
+canvas.height = canvasBG.height = size / 2;
 
 
 const space = createSpace(size, margin);

@@ -108,11 +108,16 @@ export default class Space {
                 console.log(this.nodes[i].s)
             }
         }
-        // поглиначі
-        let i = this.size - 100;
-        this.nodes[i].v = -(this.k_m**0.5)*(this.nodes[i].s - this.nodes[i - 1].s)
-        i = 100;
-        this.nodes[i].v = -(this.k_m**0.5)*(this.nodes[i].s - this.nodes[i + 1].s)
+
+        let c = Math.sqrt(this.k_m);
+        // правий поглинач
+        // let i = this.size - 2;
+        let i = this.margin + this.size - 2;
+        this.nodes[i].v = -c * (this.nodes[i].s - this.nodes[i - 1].s)
+        // лівий поглинач
+        // i = 1;
+        i = this.margin + 1;
+        this.nodes[i].v = -c * (this.nodes[i].s - this.nodes[i + 1].s)
 
 
         this.time++;

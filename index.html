@@ -9,9 +9,9 @@
 </head>
 <body>
     <main class="container">
-        <h1>Vawes1s</h1>
+        <h1>Vawes 1d</h1>
         <div>
-            k/m: <input id="k_m" value="1." style="width: 100px;">
+            k/m: <input id="k_m" value=".99" style="width: 100px;">
             loss: <input id="loss" value=".0" style="width: 100px;">
             
             <select id="state" aria-label="Select" required>
@@ -19,13 +19,14 @@
                 <option value="Sto">Sto</option>
                 <option value="Osc" >Osc</option>
                 <option value="Mon" selected >Mon</option>
+                <option value="Pul" >Pul</option>
                 <option value="Del">Del</option>
             </select>
 
-            <input id="oscill_ampl" value="1.0" style="width: 120px;" title="амплитуда">
-            <input id="oscill_q" value="0.01" style="width: 120px;" title="хвильове число">
+            <input id="oscill_ampl" value="1.0" style="width: 120px;" title="Амплитуда коливань">
+            <input id="oscill_q"   value="0.01" style="width: 120px;" title="Хвильове число коливань">
 
-            <button id="resetButton">Reset</button>
+            <button id="calmButton">Calm</button>
             <button id="runButton">Run</button>
 
             <input type="checkbox" id="is_velo_visible" title="Is velo visible."/>
@@ -33,6 +34,10 @@
 
             <!-- <span id="params"></span> -->
             <span id="time"></span>            
+        </div>
+        <div>
+            Shift <input id="s_range" type="range"  min="1", max="1000" value="100"/>
+            Velo <input id="v_range" type="range"  min="1", max="10000" value="1000"/>
         </div>
 
         <div class="canvas-frame">

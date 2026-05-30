@@ -1,6 +1,11 @@
 import Space from "../models/space.js";
 
+
+
+export let scale = { shift: 100, velo: 1000 };
+
 export default class View {
+
     space: Space
     canvas: HTMLCanvasElement
     ctx: CanvasRenderingContext2D
@@ -17,8 +22,6 @@ export default class View {
         const stateElem = document.getElementById("is_velo_visible") as HTMLInputElement;
         return stateElem.checked;      
     }
-
-
 
     backgroundPrepare() {
         let canvasBG = (document.getElementById("canvasBG") as HTMLCanvasElement)!;
@@ -41,17 +44,16 @@ export default class View {
         // grid
         ctx.beginPath();
         ctx.strokeStyle = "lightgray";         
-        for (let x = 0; x < this.canvas.width; x += 100) {
+        for (let x = 100; x < this.canvas.width; x += 100) {
             ctx.moveTo(x, 0); ctx.lineTo(x, this.canvas.height); 
         }
-        ctx.stroke();    
+        ctx.stroke(); 
+        ctx.strokeStyle = "black";
+        ctx.strokeRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
     show() 
     {
-        const velo_scale = 100;
-        const shift_scale = 100;
-
         const end = 2 * this.space.margin + this.space.size;
         const b = this.canvas.height / 2;
 
@@ -64,7 +66,7 @@ export default class View {
             ctx.beginPath();
             for (let i = 0; i < end; i++) {
                 let node = this.space.nodes[i];
-                let y = node.v * velo_scale + b;    // velo
+                let y = node.v * scale.velo + b;    // velo
                 ctx.lineTo(i, y);
             }
             ctx.stroke();
@@ -75,7 +77,7 @@ export default class View {
         ctx.beginPath();
         for (let i = 0; i < end; i++) {
             let node = this.space.nodes[i];
-            let y = node.s * shift_scale + b;    // shift
+            let y = node.s * scale.shift + b;    // shift
             ctx.lineTo(i, y);
         }
         ctx.stroke();
@@ -84,7 +86,7 @@ export default class View {
         ctx.fillStyle = "green";
         for (let o of this.space.oscillators) {
             let x = o.i;
-            let y = this.space.nodes[o.i].s * shift_scale + b; 
+            let y = this.space.nodes[o.i].s * scale.shift + b; 
             ctx.fillRect(x-3, y-3, 6, 6);
         }
         // камені
@@ -94,6 +96,11 @@ export default class View {
                 ctx.fillRect(i-3, b-3, 6, 6);
         }
     }
+
+    showNode(x: number) {
+        const node = this.space.nodes[x];
+        document.getElementById("time")!.innerHTML = `#${x}:  s=${node.s.toFixed(3)} v=${node.v.toFixed(4)}`;
+    }    
 
 }
 
