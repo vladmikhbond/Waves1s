@@ -9,6 +9,7 @@ class Node {
 
 
 export default class Space {
+
     size: number 
     margin: number
     k_m = 0   // = k/m
@@ -64,7 +65,8 @@ export default class Space {
         this.oscillators.push(o);
     }
 
-    delOscAt(i: number) {
+    deleteAt(i: number) {
+        this.nodes[i].is_stone = false;
         for (let k = 0; k < this.oscillators.length; k++) {
             if (Math.abs(this.oscillators[k].i - i) < 3) {
                 this.oscillators.splice(k, 1);
@@ -76,18 +78,18 @@ export default class Space {
     step() {
         const n = this.n;
 
-        // зміщення
-        for (let i = 1; i < n - 1; i++) {
-            if (!this.nodes[i].is_stone) {
-                this.nodes[i].s += this.nodes[i].v;
-            }
-        }
+        // // зміщення
+        // for (let i = 1; i < n - 1; i++) {
+        //     if (!this.nodes[i].is_stone) {
+        //         this.nodes[i].s += this.nodes[i].v;
+        //     }
+        // }
 
-        // осцилятори
-        for (let o of this.oscillators) {
-            this.nodes[o.i].s += o.next_s();
-            // this.nodes[o.i].v = 0;
-        }
+        // // осцилятори
+        // for (let o of this.oscillators) {
+        //     this.nodes[o.i].s += o.next_s();
+        //     // this.nodes[o.i].v = 0;
+        // }
     
         // швидкості
         for (let i = 1; i < n - 1; i++) {
@@ -118,6 +120,22 @@ export default class Space {
         // i = 1;
         i = this.margin + 1;
         this.nodes[i].v = -c * (this.nodes[i].s - this.nodes[i + 1].s)
+
+
+
+        // зміщення
+        for (let i = 1; i < n - 1; i++) {
+            if (!this.nodes[i].is_stone) {
+                this.nodes[i].s += this.nodes[i].v;
+            }
+        }
+
+        // осцилятори
+        for (let o of this.oscillators) {
+            this.nodes[o.i].s += o.next_s();
+            // this.nodes[o.i].v = 0;
+        }
+
 
 
         this.time++;

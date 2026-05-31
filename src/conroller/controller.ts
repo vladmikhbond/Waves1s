@@ -48,7 +48,7 @@ export default class Controller {
             let q = +(document.getElementById("oscill_q")! as HTMLInputElement).value;
 
             if (e.button == 2) {
-                this.space.delOscAt(x);
+                this.space.deleteAt(x);
                 this.view.show();
                 return;
             }
@@ -70,7 +70,7 @@ export default class Controller {
                     this.space.nodes[x].is_stone = true;
                     break;
                 case State.Del: 
-                    this.space.delOscAt(x);
+                    this.space.deleteAt(x);
                     break;
             }
             this.view.show();
