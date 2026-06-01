@@ -1,7 +1,5 @@
 import Space from "../models/space.js";
 
-
-
 export let scale = { shift: 100, velo: 1000 };
 
 export default class View {
@@ -95,12 +93,22 @@ export default class View {
             if (this.space.nodes[i].is_stone)
                 ctx.fillRect(i-3, b-3, 6, 6);
         }
-    }
+        // обраний вузол
+        if (this.space.selNodeIdx != -1) {      
+            const i = this.space.selNodeIdx;        
+            const node = this.space.nodes[i];
+            ctx.strokeStyle = "lightgray"; 
+            ctx.beginPath(); 
+            ctx.moveTo(i, 0); ctx.lineTo(i, this.canvas.height); 
+            ctx.stroke();      
+        }
+    }  
 
-    showNode(x: number) {
-        const node = this.space.nodes[x];
-        document.getElementById("time")!.innerHTML = `#${x}:  s=${node.s.toFixed(3)} v=${node.v.toFixed(4)}`;
-    }    
+    showSelectedNode() {
+        const i = this.space.selNodeIdx;        
+        const node = this.space.nodes[i];
+        document.getElementById("time")!.innerHTML = `#${i}:  s=${node.s.toFixed(3)} v=${node.v.toFixed(4)}`;
+    }
 
 }
 

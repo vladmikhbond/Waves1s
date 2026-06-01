@@ -16,6 +16,7 @@ export default class Space {
     time = 0  // такти часу
     nodes: Node[] = []
     oscillators: Oscillator[] = []
+    selNodeIdx = -1;
 
 
     constructor(size: number, margin: number, k_m: number, loss: number) {
@@ -53,10 +54,13 @@ export default class Space {
     }
 
     setAbsorbers() {         
-        const d = 0.1/this.size;
+        const los = 0.1 / (this.margin ** 2);
         for (let i = 0; i < this.margin; i++) {
-            this.nodes[i].loss = d * (this.margin - i);
-            this.nodes[this.margin + this.size + i].loss = d * i;
+            let xLeft = this.margin - i;
+            let xRight = this.size + this.margin + i;
+            
+            this.nodes[xLeft].loss = i * i * los;
+            this.nodes[xRight].loss = i * i * los;
         }  
     }
 
@@ -77,51 +81,31 @@ export default class Space {
 
     step() {
         const n = this.n;
-
-        // // зміщення
-        // for (let i = 1; i < n - 1; i++) {
-        //     if (!this.nodes[i].is_stone) {
-        //         this.nodes[i].s += this.nodes[i].v;
-        //     }
-        // }
-
-        // // осцилятори
-        // for (let o of this.oscillators) {
-        //     this.nodes[o.i].s += o.next_s();
-        //     // this.nodes[o.i].v = 0;
-        // }
     
         // швидкості
         for (let i = 1; i < n - 1; i++) {
-            let s = this.nodes[i+1].s + this.nodes[i-1].s 
-                - 2 * this.nodes[i].s ;
+            let s = this.nodes[i+1].s + this.nodes[i-1].s -
+                2 * this.nodes[i].s ;
 
             let a = this.k_m * s;
             this.nodes[i].v += a;
-              
-            if (i == this.margin) {
-                console.log(this.nodes[i].s)
-            }
 
             // втрати
             this.nodes[i].v *= (1 - this.nodes[i].loss);
- 
-            if (i == this.margin) {
-                console.log(this.nodes[i].s)
-            }
         }
 
         let c = Math.sqrt(this.k_m);
+        let xLeft = this.margin + 1;
+        let xRight = this.size + this.margin - 2;
+
         // правий поглинач
-        // let i = this.size - 2;
-        let i = this.margin + this.size - 2;
+        let i = this.n - 2;
+        i = xRight
         this.nodes[i].v = -c * (this.nodes[i].s - this.nodes[i - 1].s)
         // лівий поглинач
-        // i = 1;
-        i = this.margin + 1;
+        i = 1;
+        i = xLeft
         this.nodes[i].v = -c * (this.nodes[i].s - this.nodes[i + 1].s)
-
-
 
         // зміщення
         for (let i = 1; i < n - 1; i++) {
@@ -132,12 +116,10 @@ export default class Space {
 
         // осцилятори
         for (let o of this.oscillators) {
-            this.nodes[o.i].s += o.next_s();
-            // this.nodes[o.i].v = 0;
+            this.nodes[o.i].s = o.next_s();
+            this.nodes[o.i].v = (this.nodes[o.i-1].v + this.nodes[o.i+1].v) / 2;
         }
-
-
-
+        
         this.time++;
     }
 

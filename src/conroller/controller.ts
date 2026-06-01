@@ -15,6 +15,7 @@ export default class Controller {
     space: Space
     view: View
 
+
     constructor(space: Space, view: View) {
 
         this.space = space;
@@ -55,7 +56,9 @@ export default class Controller {
 
             switch (this.state) {
                 case State.Inf:
-                    this.view.showNode(x);
+
+                    this.space.selNodeIdx = x;
+                    this.view.showSelectedNode();
                     break;
                 case State.Osc:
                     this.space.addOsc(new Oscillator(x, ampl, q, this.space));
@@ -75,6 +78,7 @@ export default class Controller {
             }
             this.view.show();
         });
+
 
         document.getElementById("k_m")!.addEventListener("change", (e) => {
             let k_m = +(e.target as HTMLInputElement).value;

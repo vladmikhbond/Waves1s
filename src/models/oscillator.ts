@@ -12,24 +12,32 @@ export class Oscillator {
     constructor(i: number, a: number, q: number, space: Space) {
         this.i = i;
         this.amp = a;
-        this.space = space;        
-        this.dph = q * (space.k_m**0.5)  //  = qv
+        this.space = space; 
+        let v = Math.sqrt(space.k_m);
+        this.dph = q * v;
         this.ph = -this.dph;
     }
     
     next_s() {
-        this.ph += this.dph ;
+        this.ph += this.dph;
         return Math.sin(this.ph) * this.amp;
     }
 }
 
 export class Mono extends Oscillator {
+    
+    constructor(i: number, a: number, q: number, space: Space) {
+        super(i, a, q, space);
+        this.ph = -Math.PI/2 -this.dph;
+    }
 
+     
     next_s() {
-        if (this.ph > 2 * Math.PI) {
+        if (this.ph > 1.5 * Math.PI) {
             this.killself()
         }
-        return super.next_s();
+        this.ph += this.dph;
+        return -(Math.sin(this.ph) + 1) * this.amp / 2;
     }
 
     killself() {
