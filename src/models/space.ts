@@ -54,13 +54,13 @@ export default class Space {
     }
 
     setAbsorbers() {         
-        const los = 0.1 / (this.margin ** 2);
         for (let i = 0; i < this.margin; i++) {
             let xLeft = this.margin - i;
             let xRight = this.size + this.margin + i;
+            let loss = (i / this.margin)**2;
             
-            this.nodes[xLeft].loss = i * i * los;
-            this.nodes[xRight].loss = i * i * los;
+            this.nodes[xLeft].loss = loss;
+            this.nodes[xRight].loss = loss;
         }  
     }
 
