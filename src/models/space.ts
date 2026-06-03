@@ -82,7 +82,7 @@ export default class Space {
     step() {
         const n = this.n;
     
-        // швидкості
+        // Швидкості ------------------------------
         for (let i = 1; i < n - 1; i++) {
             let s = this.nodes[i+1].s + this.nodes[i-1].s -
                 2 * this.nodes[i].s ;
@@ -93,28 +93,24 @@ export default class Space {
             // втрати
             this.nodes[i].v *= (1 - this.nodes[i].loss);
         }
+        
+        // Випромінювачі
+        let c = Math.sqrt(this.k_m);        
+        // лівий
+        let xL = this.margin + 1;
+        this.nodes[xL].v = -c * (this.nodes[xL].s - this.nodes[xL + 1].s)
+        // правий
+        let xR = this.size + this.margin - 2;
+        this.nodes[xR].v = -c * (this.nodes[xR].s - this.nodes[xR - 1].s)
 
-        let c = Math.sqrt(this.k_m);
-        let xLeft = this.margin + 1;
-        let xRight = this.size + this.margin - 2;
-
-        // правий поглинач
-        let i = this.n - 2;
-        i = xRight
-        this.nodes[i].v = -c * (this.nodes[i].s - this.nodes[i - 1].s)
-        // лівий поглинач
-        i = 1;
-        i = xLeft
-        this.nodes[i].v = -c * (this.nodes[i].s - this.nodes[i + 1].s)
-
-        // зміщення
+        // Відхилення ----------------------------
         for (let i = 1; i < n - 1; i++) {
             if (!this.nodes[i].is_stone) {
                 this.nodes[i].s += this.nodes[i].v;
             }
         }
 
-        // осцилятори
+        // Осцилятори
         for (let o of this.oscillators) {
             this.nodes[o.i].s = o.next_s();
             this.nodes[o.i].v = (this.nodes[o.i-1].v + this.nodes[o.i+1].v) / 2;
