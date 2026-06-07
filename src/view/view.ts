@@ -13,6 +13,7 @@ export default class View {
         this.canvas = (document.getElementById("canvas") as HTMLCanvasElement)!;
         this.ctx = this.canvas.getContext("2d")!;
         this.backgroundPrepare();
+        this.show();
     }
 
     get is_velo_visible(): boolean
@@ -25,14 +26,15 @@ export default class View {
         let canvasBG = (document.getElementById("canvasBG") as HTMLCanvasElement)!;
         let ctx = canvasBG.getContext("2d")!;
         // gradient fill
+        // left
         let x0 = 0, y0 = 0, x1 = this.space.margin, y1 = this.canvas.height; 
         const gradientL = ctx.createLinearGradient(x0, 0, x1, 0);
         gradientL.addColorStop(0, "lightgray");
         gradientL.addColorStop(1, "white");
         ctx.fillStyle = gradientL;
         ctx.fillRect(x0, y0, x1 - x0, y1 - y0)
-
-        x0 = this.canvas.width - this.space.margin, y0 = 0, x1 = this.space.n, y1 = this.canvas.height; 
+        // right
+        x0 = this.space.n - this.space.margin, y0 = 0, x1 = this.space.n, y1 = this.canvas.height; 
         const gradientR = ctx.createLinearGradient(x0, 0, x1, 0);
         gradientR.addColorStop(0, "white");
         gradientR.addColorStop(1, "lightgray");

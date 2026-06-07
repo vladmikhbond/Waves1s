@@ -8,6 +8,11 @@ input[type=range] {
     margin-right: 20px;
 }
 
+input[type=text] {
+    width: 80px;
+    margin-right: 10px;
+}
+
 .canvas-frame {
     position: relative;
 } 

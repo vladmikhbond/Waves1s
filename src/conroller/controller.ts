@@ -15,16 +15,29 @@ export default class Controller {
     space: Space
     view: View
 
+    constructor() {
+        this.space = createSpace();
+        this.initCanvases();
+        this.view = new View(this.space); 
+        this.addListeners();
+ 
+    }
 
-    constructor(space: Space, view: View) {
+    initCanvases() {
+        const canvas = (document.getElementById("canvas") as HTMLCanvasElement)!;
+        const canvasBG = (document.getElementById("canvasBG") as HTMLCanvasElement)!;
+        canvas.width = this.space.size + 2 * this.space.margin;
+        canvas.height = 500;
+        canvasBG.width = this.space.size + 2 * this.space.margin;
+        canvasBG.height = 500;  
+    } 
 
-        this.space = space;
-        this.view = view;
-
-        document.getElementById("calmButton")!.addEventListener("click", () => {
+    addListeners() {
+        document.getElementById("resetButton")!.addEventListener("click", () => {
             this.stop();
-            this.space.calm();
-            this.view.show();
+            this.space = createSpace();
+            this.initCanvases();
+            this.view = new View(this.space);
         });
 
         document.getElementById("runButton")!.addEventListener("click", () => {
@@ -79,7 +92,6 @@ export default class Controller {
             this.view.show();
         });
 
-
         document.getElementById("k_m")!.addEventListener("change", (e) => {
             let k_m = +(e.target as HTMLInputElement).value;
             this.space.k_m = k_m;
@@ -110,7 +122,7 @@ export default class Controller {
             b = this.state == State.Osc || this.state == State.Mon;
             (document.getElementById("oscill_q") as HTMLSelectElement).disabled = !b;
         });
-
+       
     }
 
     // ---------------- Props -------------------
@@ -155,4 +167,12 @@ export default class Controller {
 
 }
 
+// --------------- free funcs
 
+function createSpace() {
+    const size = +(document.getElementById("size") as HTMLInputElement)!.value;
+    const margin = +(document.getElementById("margin") as HTMLInputElement)!.value;
+    let k_m = +(document.getElementById("k_m") as HTMLInputElement)!.value;
+    let l = +(document.getElementById("loss") as HTMLInputElement)!.value;
+    return new Space(size, margin, k_m, l);  //
+}

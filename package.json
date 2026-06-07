@@ -1,12 +1,12 @@
 {
-  "name": "waves1d",
+  "name": "waves1s",
   "version": "0.0.1",
   "description": "TypeScript application",
   "main": "main.js",
   
   "scripts": {
-    "build": "npx tsc",
-    "start": "npx live-server . --port=5500"
+    "build": "node scripts/build.js",
+    "start": "node scripts/build.js && npx live-server dist --port=5500"
   },
   
   "keywords": [],
