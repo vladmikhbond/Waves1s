@@ -12,6 +12,11 @@ input[type=text] {
     width: 400px;
 }
 
+#time, #info {
+    font-size: large;
+    margin-left: 50px;
+}
+
 .canvas-frame {
     position: relative;
 } 

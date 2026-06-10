@@ -24,6 +24,13 @@ export class Oscillator {
         this.ph += this.dph;
         return Math.sin(this.ph) * this.amp;
     }
+
+    killself() {
+        let idx = this.space.oscillators.indexOf(this);
+        if (idx != -1) {
+            this.space.oscillators.splice(idx, 1);
+        }
+    }
 }
 
 export class Mono extends Oscillator {
@@ -42,12 +49,7 @@ export class Mono extends Oscillator {
         return -(Math.sin(this.ph) + 1) * this.amp / 2;
     }
 
-    killself() {
-        let idx = this.space.oscillators.indexOf(this);
-        if (idx != -1) {
-            this.space.oscillators.splice(idx, 1);
-        }
-    }
+
 }
 
 export class Pulse extends Mono {

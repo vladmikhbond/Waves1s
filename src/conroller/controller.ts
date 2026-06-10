@@ -157,10 +157,8 @@ export default class Controller {
         this.view.show();
         document.getElementById("time")!.innerHTML = this.space.time.toString()
         if (this.mode == Mode.Inf) {
-            infoElement.innerHTML = `E = ${this.space.energy()}`
+            infoElement.innerHTML = `E = ${this.space.energy().toFixed(6)}`
         }
-
-
     }
 
     stop() {
