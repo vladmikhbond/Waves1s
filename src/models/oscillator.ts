@@ -7,15 +7,17 @@ export class Oscillator {
     amp = 0    
     ph = 0   // поточна фаза
     dph = 0  // приріст фази
-    space: Space;
+    space: Space
+    vx = 0
     
-    constructor(i: number, a: number, q: number, space: Space) {
+    constructor(i: number, a: number, q: number, space: Space, vx = 0) {
         this.i = i;
         this.amp = a;
         this.space = space; 
-        let v = Math.sqrt(space.k_m);
+        let v = Math.sqrt(space.k);
         this.dph = q * v;
         this.ph = -this.dph;
+        this.vx = vx ? 1/vx | 0 : 0;
     }
     
     next_s() {

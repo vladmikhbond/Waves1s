@@ -12,14 +12,14 @@ export default class Space {
 
     size: number 
     margin: number
-    k_m = 0   // = k/m
+    k = 0   // = k/m
     time = 0  // такти часу
     nodes: Node[] = []
     oscillators: Oscillator[] = []
     selNodeIdx = -1;
 
 
-    constructor(size: number, margin: number, k_m: number, loss: number) {
+    constructor(size: number, margin: number, k: number, loss: number) {
         this.size = size;
         this.margin = margin;
         // спершу створити вузли
@@ -27,7 +27,7 @@ export default class Space {
         for (let i = 0; i < this.n; i++) {
             this.nodes[i] = new Node();
         }
-        this.k_m = k_m;
+        this.k = k;
         this.loss = loss;
         this.setAbsorbers();
     }
@@ -40,6 +40,11 @@ export default class Space {
         for (let i = this.margin; i < this.margin + this.size; i++) {
             this.nodes[i].loss = val;
         }
+    }
+
+    get loss() {
+        let i = this.nodes.length / 2 | 0;
+        return this.nodes[i].loss;
     }
 
     calm() {
@@ -87,7 +92,7 @@ export default class Space {
             let s = this.nodes[i+1].s + this.nodes[i-1].s -
                 2 * this.nodes[i].s ;
 
-            let a = this.k_m * s;
+            let a = this.k * s;
             this.nodes[i].v += a;
 
             // втрати
@@ -95,7 +100,7 @@ export default class Space {
         }
         
         // Випромінювачі
-        let c = Math.sqrt(this.k_m);        
+        let c = Math.sqrt(this.k);        
         // лівий
         let xL = this.margin + 1;
         this.nodes[xL].v = -c * (this.nodes[xL].s - this.nodes[xL + 1].s)
@@ -113,10 +118,32 @@ export default class Space {
         // Осцилятори
         for (let o of this.oscillators) {
             this.nodes[o.i].s = o.next_s();
-            this.nodes[o.i].v = (this.nodes[o.i-1].v + this.nodes[o.i+1].v) / 2;
+            // this.nodes[o.i].v = (this.nodes[o.i-1].v + this.nodes[o.i+1].v) / 2;
         }
         
+        // Рух осциляторів        
+        for (let o of this.oscillators) {
+            if (o.vx && this.time % o.vx == 0) {
+                o.i++;
+            }
+        }
+
+        // час 
         this.time++;
+    }
+
+
+    energy() {
+        const n = this.size;
+        let e = 0;
+        // швидкості
+        for (let i = 1; i < n - 1; i++) {
+            e += this.nodes[i].v ** 2; 
+        }
+        for (let i = 1; i < n - 2; i++) {
+            e += (this.nodes[i+1].s - this.nodes[i].s)**2;
+        }
+        return e / 2;
     }
 
 }

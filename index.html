@@ -9,15 +9,15 @@
 </head>
 <body>
     <main class="container">
-        <h1>Vawes 1d</h1>
+        <h1>
+            Vawes 1s 
+            <span id="time"></span> 
+            <span id="info"> </span> 
+        </h1>
         <div>
-            size: <input id="size" type="text"value="500">
-            margin: <input id="margin" type="text" value="200">
+            <input id="params" type="text" value="size=500; margin=200;  k=0.99; loss=0.0" >
             
-            k/m: <input id="k_m" value=".99" style="width: 100px;">
-            loss: <input id="loss" value=".0" style="width: 100px;">
-            
-            <select id="state" aria-label="Select" required>
+            <select id="mode" aria-label="Select" required>
                 <option value="Inf" >Inf</option>
                 <option value="Sto">Sto</option>
                 <option value="Osc" selected >Osc</option>
@@ -25,15 +25,11 @@
                 <option value="Del">Del</option>
             </select>
 
-            <input id="oscill_ampl" value="1.0" style="width: 120px;" title="Амплитуда коливань">
-            <input id="oscill_q"   value="0.01" style="width: 120px;" title="Хвильове число - q = 2π/λ ">
+            <input id="oscilParams" type="text" value="amp=1;  q=0.25; vx=0" >
 
-            <button id="resetButton">C</button>
             <button id="runButton">Run</button>
 
-            <input id="is_velo_visible" type="checkbox" title="Is velo visible."/>
-
-            <span id="time"></span>            
+            <input id="is_velo_visible" type="checkbox" title="Is velo visible."/>      
         </div>
         <div>
             Amp <input id="s_range" type="range"  min="0", max="1000" value="100"/>

@@ -3,12 +3,15 @@ import Space from "../models/space.js";
 import View from "../view/view.js";
 import { scale } from "../view/view.js";
 
+const modeElement = (document.getElementById("mode") as HTMLInputElement)!;
+const infoElement = (document.getElementById("info") as HTMLInputElement)!;
+
+
 let timer: ReturnType<typeof setInterval> | 0 = 0;
 
-enum State {
-    Inf, Osc, Mon, Pul, Sto, Del
+enum Mode {
+    Inf, Osc, Mon, Sto, Del
 }
-
 
 export default class Controller {
 
@@ -20,7 +23,6 @@ export default class Controller {
         this.initCanvases();
         this.view = new View(this.space); 
         this.addListeners();
- 
     }
 
     initCanvases() {
@@ -33,12 +35,6 @@ export default class Controller {
     } 
 
     addListeners() {
-        document.getElementById("resetButton")!.addEventListener("click", () => {
-            this.stop();
-            this.space = createSpace();
-            this.initCanvases();
-            this.view = new View(this.space);
-        });
 
         document.getElementById("runButton")!.addEventListener("click", () => {
             if (timer) 
@@ -54,12 +50,41 @@ export default class Controller {
             }
         });
 
+       // params changed 
+        document.getElementById("params")!.addEventListener("keydown", (e: KeyboardEvent) => {
+
+            if (e.key == "Enter") {
+                document.getElementById("s_range")!.focus();
+                this.stop();
+                const [size,  margin, k,  loss] = getParams();
+                
+                if (this.space.size != size || this.space.margin != margin) {
+                    // new space
+                    this.space = new Space(size,  margin, k,  loss); 
+                    this.initCanvases();
+                    this.view = new View(this.space);
+                    this.view.show();
+                    return;
+                }                                            
+                if (this.space.k != k || this.space.loss != loss) {
+                    // new params
+                    this.space.k = k;
+                    this.space.loss = loss;
+                } else {
+                    // just calm
+                    this.space.calm();
+                } 
+                this.view.show();
+            }
+        });             
+
+
+
+
         document.getElementById("canvas")!.addEventListener("mousedown", (e: MouseEvent) => {
 
             let x = e.offsetX;
-
-            let ampl = +(document.getElementById("oscill_ampl")! as HTMLInputElement).value;
-            let q = +(document.getElementById("oscill_q")! as HTMLInputElement).value;
+            let [ampl, q, vx] = getOscilParams();    //todo
 
             if (e.button == 2) {
                 this.space.deleteAt(x);
@@ -67,39 +92,25 @@ export default class Controller {
                 return;
             }
 
-            switch (this.state) {
-                case State.Inf:
-
+            switch (this.mode) {
+                case Mode.Inf:
                     this.space.selNodeIdx = x;
                     this.view.showSelectedNode();
                     break;
-                case State.Osc:
-                    this.space.addOsc(new Oscillator(x, ampl, q, this.space));
+                case Mode.Osc:
+                    this.space.addOsc(new Oscillator(x, ampl, q, this.space, vx));
                     break;
-                case State.Mon:
+                case Mode.Mon:
                     this.space.addOsc(new Mono(x, ampl, q, this.space));
                     break;
-                case State.Pul:
-                    this.space.addOsc(new Pulse(x, ampl, q, this.space));
-                    break;
-                case State.Sto: 
+                case Mode.Sto: 
                     this.space.nodes[x].is_stone = true;
                     break;
-                case State.Del: 
+                case Mode.Del: 
                     this.space.deleteAt(x);
                     break;
             }
             this.view.show();
-        });
-
-        document.getElementById("k_m")!.addEventListener("change", (e) => {
-            let k_m = +(e.target as HTMLInputElement).value;
-            this.space.k_m = k_m;
-        });
-
-        document.getElementById("loss")!.addEventListener("change", (e) => {
-            let loss = +(e.target as HTMLInputElement).value;       
-            this.space.loss = loss;
         });
 
         document.getElementById("is_velo_visible")!.addEventListener("change", (e) => {
@@ -116,10 +127,10 @@ export default class Controller {
             this.view.show();
         });
 
-        document.getElementById("state")!.addEventListener("change", (e) => {
-            let b = this.state == State.Osc || this.state == State.Mon || this.state == State.Pul;
+        document.getElementById("mode")!.addEventListener("change", (e) => {
+            let b = this.mode == Mode.Osc || this.mode == Mode.Mon;
             (document.getElementById("oscill_ampl") as HTMLSelectElement).disabled = !b;
-            b = this.state == State.Osc || this.state == State.Mon;
+            b = this.mode == Mode.Osc || this.mode == Mode.Mon;
             (document.getElementById("oscill_q") as HTMLSelectElement).disabled = !b;
         });
        
@@ -127,16 +138,15 @@ export default class Controller {
 
     // ---------------- Props -------------------
     
-    get state(): State 
+    get mode(): Mode 
     {
-        const stateElem = document.getElementById("state") as HTMLInputElement;
-        switch(stateElem.value) {
-            case "Osc": return State.Osc;
-            case "Sto": return State.Sto;
-            case "Mon": return State.Mon;
-            case "Pul": return State.Pul;
-            case "Del": return State.Del;
-            default: return State.Inf;           
+
+        switch(modeElement.value) {
+            case "Osc": return Mode.Osc;
+            case "Sto": return Mode.Sto;
+            case "Mon": return Mode.Mon;
+            case "Del": return Mode.Del;
+            default: return Mode.Inf;           
         }       
     }
 
@@ -146,10 +156,11 @@ export default class Controller {
         this.space.step();  
         this.view.show();
         document.getElementById("time")!.innerHTML = this.space.time.toString()
+        if (this.mode == Mode.Inf) {
+            infoElement.innerHTML = `E = ${this.space.energy()}`
+        }
 
-        // stop when limit
-        if (this.space.nodes[1].v > 0.0001)
-            stop(); 
+
     }
 
     stop() {
@@ -169,10 +180,41 @@ export default class Controller {
 
 // --------------- free funcs
 
-function createSpace() {
-    const size = +(document.getElementById("size") as HTMLInputElement)!.value;
-    const margin = +(document.getElementById("margin") as HTMLInputElement)!.value;
-    let k_m = +(document.getElementById("k_m") as HTMLInputElement)!.value;
-    let l = +(document.getElementById("loss") as HTMLInputElement)!.value;
-    return new Space(size, margin, k_m, l);  //
+function getParams() {
+    const el = (document.getElementById("params") as HTMLInputElement)!;
+    let f;
+    try {
+        f = new Function("", 
+            "let size, margin, k, loss;" + 
+            el.value + 
+            "; return [size, margin, k,  loss]" 
+        );
+    } catch {
+        el.style.backgroundColor = "pink";
+        return [500, 200, 0.99, 0]
+    }
+
+    const [size,  margin, k,  loss] = f!();
+    // params are OK  
+    if (size != undefined &&  margin != undefined &&  k != undefined && loss != undefined) {
+        el.style.backgroundColor = "white";
+        return [size, margin, k,  loss];
+    }
+    // params are wrong
+    el.style.backgroundColor = "pink";
+    return [500, 200, 0.99, 0];    
+}
+
+function getOscilParams() {
+    const f = new Function("", 
+        "let amp = 1,  q = 0.25, vx=1/2 ;" + 
+        (document.getElementById("oscilParams") as HTMLInputElement)!.value +
+        "; return [amp, q, vx]" );
+    return f();
+}
+
+
+export function createSpace() {
+    const [size, margin, k, loss] = getParams();
+    return new Space(size, margin, k, loss);
 }

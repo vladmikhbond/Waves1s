@@ -1,4 +1,4 @@
-#state {
+#mode {
     display: inline;
     width: 120px;
 }
@@ -9,8 +9,7 @@ input[type=range] {
 }
 
 input[type=text] {
-    width: 80px;
-    margin-right: 10px;
+    width: 400px;
 }
 
 .canvas-frame {
