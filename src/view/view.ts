@@ -89,6 +89,14 @@ export default class View {
             let y = this.space.nodes[o.i].s * scale.shift + b; 
             ctx.fillRect(x-3, y-3, 6, 6);
         }
+        // приймачі
+        ctx.fillStyle = "red";
+        for (let r of this.space.receivers) {
+            let x = r.i;
+            let y = this.space.nodes[r.i].s * scale.shift + b; 
+            ctx.fillRect(x-3, y-3, 6, 6);
+        }
+
         // камені
         ctx.fillStyle = "black";
         for (let i = 0; i < end; i++) {

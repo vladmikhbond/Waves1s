@@ -1,4 +1,5 @@
-import {Oscillator, Mono, Pulse} from "../models/oscillator.js";
+import {Oscillator, Mono} from "../models/oscillator.js";
+import Receiver from "../models/receiver.js";
 import Space from "../models/space.js";
 import View from "../view/view.js";
 import { scale } from "../view/view.js";
@@ -10,7 +11,7 @@ const infoElement = (document.getElementById("info") as HTMLInputElement)!;
 let timer: ReturnType<typeof setInterval> | 0 = 0;
 
 enum Mode {
-    Inf, Osc, Mon, Sto, Del
+    Inf, Osc, Mon, Rec, Sto, Del
 }
 
 export default class Controller {
@@ -79,12 +80,10 @@ export default class Controller {
         });             
 
 
-
-
         document.getElementById("canvas")!.addEventListener("mousedown", (e: MouseEvent) => {
 
-            let x = e.offsetX;
-            let [ampl, q, vx] = getOscilParams();    //todo
+            const x = e.offsetX;
+            const [ampl, q, vx] = getOscilParams();    //todo
 
             if (e.button == 2) {
                 this.space.deleteAt(x);
@@ -98,10 +97,14 @@ export default class Controller {
                     this.view.showSelectedNode();
                     break;
                 case Mode.Osc:
-                    this.space.addOsc(new Oscillator(x, ampl, q, this.space, vx));
+                    this.space.addOscillator(new Oscillator(x, ampl, q, this.space, vx));
                     break;
                 case Mode.Mon:
-                    this.space.addOsc(new Mono(x, ampl, q, this.space));
+                    this.space.addOscillator(new Mono(x, ampl, q, this.space));
+                    break;
+                case Mode.Rec:
+                    const loss = getReceiverParams();
+                    this.space.addReceiver(new Receiver(x, loss, this.space));
                     break;
                 case Mode.Sto: 
                     this.space.nodes[x].is_stone = true;
@@ -128,10 +131,10 @@ export default class Controller {
         });
 
         document.getElementById("mode")!.addEventListener("change", (e) => {
-            let b = this.mode == Mode.Osc || this.mode == Mode.Mon;
-            (document.getElementById("oscill_ampl") as HTMLSelectElement).disabled = !b;
-            b = this.mode == Mode.Osc || this.mode == Mode.Mon;
-            (document.getElementById("oscill_q") as HTMLSelectElement).disabled = !b;
+            document.getElementById("oscilParams")!.style.display = 
+                    this.mode == Mode.Osc || this.mode == Mode.Mon ? "inline" : "none";
+            document.getElementById("recieverParams")!.style.display = 
+                    this.mode == Mode.Rec ? "inline" : "none";
         });
        
     }
@@ -140,11 +143,11 @@ export default class Controller {
     
     get mode(): Mode 
     {
-
         switch(modeElement.value) {
             case "Osc": return Mode.Osc;
             case "Sto": return Mode.Sto;
             case "Mon": return Mode.Mon;
+            case "Rec": return Mode.Rec;
             case "Del": return Mode.Del;
             default: return Mode.Inf;           
         }       
@@ -211,8 +214,16 @@ function getOscilParams() {
     return f();
 }
 
+function getReceiverParams() {
+    const f = new Function("", 
+        "let loss = 0.5;" + 
+        (document.getElementById("recieverParams") as HTMLInputElement)!.value +
+        "; return loss" );
+    return f();   
+}
 
 export function createSpace() {
     const [size, margin, k, loss] = getParams();
     return new Space(size, margin, k, loss);
 }
+

@@ -1,4 +1,5 @@
 import {Oscillator} from "./oscillator.js"
+import Receiver from "./receiver.js"
 
 class Node {
     s = 0  // shift 
@@ -10,12 +11,14 @@ class Node {
 
 export default class Space {
 
+
     size: number 
     margin: number
     k = 0   // = k/m
     time = 0  // такти часу
     nodes: Node[] = []
     oscillators: Oscillator[] = []
+    receivers: Receiver[] = []
     selNodeIdx = -1;
 
 
@@ -70,18 +73,43 @@ export default class Space {
     }
 
 
-    addOsc(o: Oscillator) {
+    addOscillator(o: Oscillator) {
         this.oscillators.push(o);
+    }
+
+    remOscillator(o: Oscillator) {
+        const idx = this.oscillators.indexOf(o);
+        if (idx != -1) {
+            this.oscillators.splice(idx, 1);
+        }
+    }
+
+    addReceiver(r: Receiver) {
+        this.receivers.push(r);
+        // встановлює коеф втрат у вузлі
+        this.nodes[r.i].loss = r.loss; 
+    }
+
+    remReceiver(r: Receiver) {
+        const idx = this.receivers.indexOf(r);
+        if (idx != -1) {
+            this.receivers.splice(idx, 1);
+            // повертає коеф втрат у вузлі
+            this.nodes[r.i].loss = this.loss; 
+        }
     }
 
     deleteAt(i: number) {
         this.nodes[i].is_stone = false;
-        for (let k = 0; k < this.oscillators.length; k++) {
-            if (Math.abs(this.oscillators[k].i - i) < 3) {
-                this.oscillators.splice(k, 1);
-                return;
-            }
+        for (const o of this.oscillators.slice()) {
+            if (Math.abs(o.i - i) < 3) 
+                this.remOscillator(o);
         }
+        for (const r of this.receivers.slice()) {
+            if (Math.abs(r.i - i) < 3) 
+                this.remReceiver(r);
+        }
+
     }
 
     step() {
@@ -118,6 +146,11 @@ export default class Space {
         // Осцилятори
         for (let o of this.oscillators) {
             this.nodes[o.i].s = o.next_s();
+        }
+        
+        // Приймачі
+        for (let o of this.receivers) {
+            o.step();
         }
         
         // Рух осциляторів        
