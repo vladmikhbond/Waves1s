@@ -8,8 +8,11 @@ input[type=range] {
     margin-right: 20px;
 }
 
-input[type=text] {
-    width: 400px;
+#params {
+    width: 450px;
+}
+#oscilParams, #recieverParams {
+    width: 300px;
 }
 
 #time, #info {
