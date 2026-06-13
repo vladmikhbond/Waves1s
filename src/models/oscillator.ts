@@ -20,7 +20,7 @@ export class Oscillator {
         this.vx = vx ? 1/vx | 0 : 0;
     }
     
-    next_s() {
+    step() {
         this.ph += this.dph;
         return Math.sin(this.ph) * this.amp;
     }
@@ -41,7 +41,7 @@ export class Mono extends Oscillator {
     }
 
      
-    next_s() {
+    step() {
         if (this.ph > 1.5 * Math.PI) {
             this.killself()
         }
@@ -55,7 +55,7 @@ export class Mono extends Oscillator {
 export class Pulse extends Mono {
     t = 0;
 
-    next_s() {
+    step() {
         this.killself();
         return this.amp;
     }

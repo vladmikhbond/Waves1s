@@ -145,7 +145,7 @@ export default class Space {
 
         // Осцилятори
         for (let o of this.oscillators) {
-            this.nodes[o.i].s = o.next_s();
+            this.nodes[o.i].s = o.step();
         }
         
         // Приймачі
