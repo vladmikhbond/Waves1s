@@ -22,7 +22,7 @@ export class Oscillator {
     
     step() {
         this.ph += this.dph;
-        return Math.sin(this.ph) * this.amp;
+        return Math.exp(Math.sin(this.ph)) * this.amp;
     }
 
     killself() {
