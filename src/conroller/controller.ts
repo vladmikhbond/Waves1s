@@ -83,7 +83,8 @@ export default class Controller {
         document.getElementById("canvas")!.addEventListener("mousedown", (e: MouseEvent) => {
 
             const x = e.offsetX;
-            const [ampl, q, vx] = getOscilParams();    //todo
+            const [ampl, q, vx, lambda] = getOscilParams();  
+
 
             if (e.button == 2) {
                 this.space.deleteAt(x);
@@ -97,10 +98,10 @@ export default class Controller {
                     this.view.showSelectedNode();
                     break;
                 case Mode.Osc:
-                    this.space.addOscillator(new Oscillator(x, ampl, q, this.space, vx));
+                    this.space.addOscillator(new Oscillator(ampl, q, lambda, vx, x, this.space));
                     break;
                 case Mode.Mon:
-                    this.space.addOscillator(new Mono(x, ampl, q, this.space));
+                    this.space.addOscillator(new Mono(ampl, q, lambda, vx, x, this.space));
                     break;
                 case Mode.Rec:
                     const loss = getReceiverParams();
@@ -208,10 +209,11 @@ function getParams() {
 
 function getOscilParams() {
     const f = new Function("", 
-        "let amp = 1,  q = 0.25, vx=1/2 ;" + 
+        "let amp = 1,  q =0, vx=1/2, la=0 ;" + 
         (document.getElementById("oscilParams") as HTMLInputElement)!.value +
-        "; return [amp, q, vx]" );
-    return f();
+        "; return [amp, q, vx, la]" );
+
+        return f()
 }
 
 function getReceiverParams() {

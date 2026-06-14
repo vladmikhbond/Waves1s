@@ -10,19 +10,27 @@ export class Oscillator {
     space: Space
     vx = 0
     
-    constructor(i: number, a: number, q: number, space: Space, vx = 0) {
+    constructor( a: number, q: number, lambda: number, vx: number, i: number, space: Space) {
         this.i = i;
         this.amp = a;
         this.space = space; 
         let v = Math.sqrt(space.k);
+
+        if (lambda) {
+            q = 2*Math.PI /  lambda;
+        }
+
         this.dph = q * v;
         this.ph = -this.dph;
+        // velo
         this.vx = vx ? 1/vx | 0 : 0;
     }
-    
+
+
     step() {
         this.ph += this.dph;
-        return Math.exp(Math.sin(this.ph)) * this.amp;
+        let f = Math.sin(this.ph)
+        return f * this.amp;
     }
 
     killself() {
@@ -35,8 +43,8 @@ export class Oscillator {
 
 export class Mono extends Oscillator {
     
-    constructor(i: number, a: number, q: number, space: Space) {
-        super(i, a, q, space);
+    constructor( a: number, q: number, lambda: number, vx: number, i: number, space: Space) {
+        super(a, q, lambda, 0, i, space);
         this.ph = -Math.PI/2 -this.dph;
     }
 
