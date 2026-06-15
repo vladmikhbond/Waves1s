@@ -79,7 +79,6 @@ export default class Controller {
             }
         });             
 
-
         document.getElementById("canvas")!.addEventListener("mousedown", (e: MouseEvent) => {
 
             const x = e.offsetX;
@@ -95,7 +94,7 @@ export default class Controller {
             switch (this.mode) {
                 case Mode.Inf:
                     this.space.selNodeIdx = x;
-                    this.view.showSelectedNode();
+                    this.view.showSelObject();
                     break;
                 case Mode.Osc:
                     this.space.addOscillator(new Oscillator(ampl, q, lambda, vx, x, this.space));
@@ -169,6 +168,7 @@ export default class Controller {
         if (timer) {
             clearInterval(timer);
             timer = 0;
+            this.view.showSelObject();
         }
     }
     

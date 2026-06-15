@@ -1,4 +1,5 @@
 import Space from "../models/space.js";
+import {Node} from "../models/space.js";
 
 export let scale = { shift: 100, velo: 1000 };
 
@@ -114,10 +115,24 @@ export default class View {
         }
     }  
 
-    showSelectedNode() {
-        const i = this.space.selNodeIdx;        
-        const node = this.space.nodes[i];
-        document.getElementById("time")!.innerHTML = `#${i}:  s=${node.u.toFixed(3)} v=${node.v.toFixed(4)}`;
+    showSelObject() {
+        const el = document.getElementById("info")!;
+        const idx = this.space.selNodeIdx;
+        if (idx == -1) return
+        let osc = this.space.getOscillatorAt(idx);
+        if (osc) {
+            el.innerHTML = `osc: #${osc.i}:  amp=${osc.amp.toFixed(1)} ph=${osc.ph.toFixed(3)}`;
+            return;
+        } 
+        let rec = this.space.getReceiverAt(idx);
+        if (rec) {
+            el.innerHTML = `rec: #${rec.i}:  energy=${rec.energy.toFixed(5)}`;
+            return;
+        } 
+        let node = this.space.nodes[idx];
+        if (node) {
+            el.innerHTML = `node: #${idx}:  u=${node.u.toFixed(3)} v=${node.v.toFixed(4)}`;
+        }
     }
 
 }

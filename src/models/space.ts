@@ -1,7 +1,7 @@
 import {Oscillator} from "./oscillator.js"
 import Receiver from "./receiver.js"
 
-class Node {
+export class Node {
     u = 0  // shift 
     v = 0  // velo
     loss = 0
@@ -48,6 +48,27 @@ export default class Space {
         let i = this.nodes.length / 2 | 0;
         return this.nodes[i].loss;
     }
+
+    getOscillatorAt(n: number): Oscillator | null
+    {
+        for (const osc of this.oscillators) {
+            if (Math.abs(osc.i - n) < 3) {
+                return osc;
+            }
+        }
+        return null;
+    }
+
+    getReceiverAt(n: number): Receiver | null
+    {
+        for (const rec of this.receivers) {
+            if (Math.abs(rec.i - n) < 3) {
+                return rec;
+            }
+        }
+        return null;
+    }
+
 
     calm() {
         for (let node of this.nodes) {
