@@ -2,7 +2,7 @@ import {Oscillator} from "./oscillator.js"
 import Receiver from "./receiver.js"
 
 class Node {
-    s = 0  // shift 
+    u = 0  // shift 
     v = 0  // velo
     loss = 0
     is_stone = false
@@ -10,7 +10,6 @@ class Node {
 
 
 export default class Space {
-
 
     size: number 
     margin: number
@@ -53,7 +52,7 @@ export default class Space {
     calm() {
         for (let node of this.nodes) {
             node.v = 0;
-            node.s = 0;            
+            node.u = 0;            
         } 
         for (let osc of this.oscillators) {
             osc.ph = 0;
@@ -113,39 +112,39 @@ export default class Space {
     }
 
     step() {
-        const n = this.n;
+        const N = this.n;
     
         // Швидкості ------------------------------
-        for (let i = 1; i < n - 1; i++) {
-            let s = this.nodes[i+1].s + this.nodes[i-1].s -
-                2 * this.nodes[i].s ;
+        for (let n = 1; n < N - 1; n++) {
+            let U = this.nodes[n+1].u + this.nodes[n-1].u -
+                2 * this.nodes[n].u ;
 
-            let a = this.k * s;
-            this.nodes[i].v += a;
+            let a = this.k * U;
+            this.nodes[n].v += a;
 
             // втрати
-            this.nodes[i].v *= (1 - this.nodes[i].loss);
+            this.nodes[n].v *= (1 - this.nodes[n].loss);
         }
         
         // Випромінювачі
         let c = Math.sqrt(this.k);        
         // лівий
         let xL = this.margin + 1;
-        this.nodes[xL].v = -c * (this.nodes[xL].s - this.nodes[xL + 1].s)
+        this.nodes[xL].v = -c * (this.nodes[xL].u - this.nodes[xL + 1].u)
         // правий
         let xR = this.size + this.margin - 2;
-        this.nodes[xR].v = -c * (this.nodes[xR].s - this.nodes[xR - 1].s)
+        this.nodes[xR].v = -c * (this.nodes[xR].u - this.nodes[xR - 1].u)
 
         // Відхилення ----------------------------
-        for (let i = 1; i < n - 1; i++) {
-            if (!this.nodes[i].is_stone) {
-                this.nodes[i].s += this.nodes[i].v;
+        for (let n = 1; n < N - 1; n++) {
+            if (!this.nodes[n].is_stone) {
+                this.nodes[n].u += this.nodes[n].v;                
             }
         }
 
         // Осцилятори
         for (let o of this.oscillators) {
-            this.nodes[o.i].s = o.step();
+            this.nodes[o.i].u = o.step();
         }
         
         // Приймачі
@@ -157,10 +156,10 @@ export default class Space {
         for (let o of this.oscillators) {
             if (o.vx && this.time % o.vx == 0) {
                 this.nodes[o.i].v = (this.nodes[o.i - 1].v + this.nodes[o.i + 1].v) / 2;
-                this.nodes[o.i].s = (this.nodes[o.i - 1].s + this.nodes[o.i + 1].s) / 2; 
+                this.nodes[o.i].u = (this.nodes[o.i - 1].u + this.nodes[o.i + 1].u) / 2; 
                 if (o.vx > 0) o.i++;
                 if (o.vx < 0) o.i--;
-                if (o.i <= 0 || o.i >= n - 1) {
+                if (o.i <= 0 || o.i >= N - 1) {
                     o.killself();  
                     break;
                 }
@@ -183,7 +182,7 @@ export default class Space {
             e += this.nodes[i].v ** 2; 
         }
         for (let i = beg; i < end - 1; i++) {
-            e += (this.nodes[i+1].s - this.nodes[i].s)**2;
+            e += (this.nodes[i+1].u - this.nodes[i].u)**2;
         }
         return e / 2;
     }

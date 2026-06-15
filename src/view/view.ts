@@ -77,7 +77,7 @@ export default class View {
         ctx.beginPath();
         for (let i = 0; i < end; i++) {
             let node = this.space.nodes[i];
-            let y = node.s * scale.shift + b;    // shift
+            let y = node.u * scale.shift + b;    // shift
             ctx.lineTo(i, y);
         }
         ctx.stroke();
@@ -86,14 +86,14 @@ export default class View {
         ctx.fillStyle = "green";
         for (let o of this.space.oscillators) {
             let x = o.i;
-            let y = this.space.nodes[o.i].s * scale.shift + b; 
+            let y = this.space.nodes[o.i].u * scale.shift + b; 
             ctx.fillRect(x-3, y-3, 6, 6);
         }
         // приймачі
         ctx.fillStyle = "red";
         for (let r of this.space.receivers) {
             let x = r.i;
-            let y = this.space.nodes[r.i].s * scale.shift + b; 
+            let y = this.space.nodes[r.i].u * scale.shift + b; 
             ctx.fillRect(x-3, y-3, 6, 6);
         }
 
@@ -117,7 +117,7 @@ export default class View {
     showSelectedNode() {
         const i = this.space.selNodeIdx;        
         const node = this.space.nodes[i];
-        document.getElementById("time")!.innerHTML = `#${i}:  s=${node.s.toFixed(3)} v=${node.v.toFixed(4)}`;
+        document.getElementById("time")!.innerHTML = `#${i}:  s=${node.u.toFixed(3)} v=${node.v.toFixed(4)}`;
     }
 
 }
