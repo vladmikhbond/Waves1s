@@ -5,7 +5,7 @@ import View from "../view/view.js";
 import { scale } from "../view/view.js";
 
 const modeElement = (document.getElementById("mode") as HTMLInputElement)!;
-const infoElement = (document.getElementById("info") as HTMLInputElement)!;
+const timeElement = (document.getElementById("time") as HTMLInputElement)!;
 
 
 let timer: ReturnType<typeof setInterval> | 0 = 0;
@@ -48,6 +48,7 @@ export default class Controller {
             if (e.key == "s" || e.key == "і" ) {
                 stop();
                 this.step();
+                this.view.showSelObject();
             }
         });
 
@@ -158,10 +159,7 @@ export default class Controller {
     step() {
         this.space.step();  
         this.view.show();
-        document.getElementById("time")!.innerHTML = this.space.time.toString()
-        if (this.mode == Mode.Inf) {
-            infoElement.innerHTML = `E = ${this.space.energy().toFixed(6)}`
-        }
+        timeElement.innerHTML = this.space.time.toString()
     }
 
     stop() {

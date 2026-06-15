@@ -116,28 +116,29 @@ export default class View {
     }  
 
     showSelObject() {
+        const energyStr  = `....Σ = ${this.space.energy().toFixed(6)}`;
+
         const el = document.getElementById("info")!;
         const idx = this.space.selNodeIdx;
         if (idx == -1) return
         let osc = this.space.getOscillatorAt(idx);
         if (osc) {
-            el.innerHTML = `osc: #${osc.i}:  amp=${osc.amp.toFixed(1)} ph=${osc.ph.toFixed(3)}`;
+            const grad = Math.round((osc.ph % (2*Math.PI))*360/(2*Math.PI)); 
+            el.innerHTML = `osc: #${osc.i}:  amp=${osc.amp.toFixed(1)} ph=${grad}°; ${energyStr}`;
             return;
         } 
         let rec = this.space.getReceiverAt(idx);
         if (rec) {
-            el.innerHTML = `rec: #${rec.i}:  energy=${rec.energy.toFixed(5)}`;
+            el.innerHTML = `rec: #${rec.i}:  energy=${rec.energy.toFixed(5)};  ${energyStr}`;
             return;
         } 
         let node = this.space.nodes[idx];
         if (node) {
-            el.innerHTML = `node: #${idx}:  u=${node.u.toFixed(3)} v=${node.v.toFixed(4)}`;
+            el.innerHTML = `node: #${idx}:  u=${node.u.toFixed(3)} v=${node.v.toFixed(4)};  ${energyStr}`;
         }
     }
 
 }
-
-
 
 
 
