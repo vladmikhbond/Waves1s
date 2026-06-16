@@ -3,6 +3,7 @@ import Receiver from "../models/receiver.js";
 import Space from "../models/space.js";
 import View from "../view/view.js";
 import { scale } from "../view/view.js";
+import { getSpaceParams, getOscilParams, getReceiverParams } from "./params.js";
 
 const modeElement = (document.getElementById("mode") as HTMLInputElement)!;
 const timeElement = (document.getElementById("time") as HTMLInputElement)!;
@@ -193,91 +194,3 @@ export default class Controller {
     }
 
 }
-
-// --------------- params suit ------------------
-
-function getSpaceParams(): [number, number, number, number]
-{
-    const defValue: [number, number, number, number] = [500, 200, 0.99, 0];
-    const paramsElement = (document.getElementById("spaceParams") as HTMLInputElement)!;
-    let ps: [number, number, number, number];
-    try {
-        ps = (new Function("", 
-            "let size, margin, k, loss;" + 
-            paramsElement.value + 
-            "; return [size, margin, k,  loss]" 
-        ))();
-    } catch {
-        return errMesage("Grammar error", defValue, paramsElement);
-    }
-    // перевірки
-    if (ps[0] == undefined || ps[0] < 100) 
-        return errMesage("Size must by >= 100", defValue, paramsElement);
-
-    if (ps[1] == undefined || ps[1] < 0 || ps[1] > ps[0] / 2 )
-        return errMesage("Margin: 0 < margin < size/2", defValue, paramsElement);
-
-    if (ps[2] == undefined || ps[2] < 0 || ps[2] > 1)
-        return errMesage("K: 0 < k < 1", defValue, paramsElement);
-
-    if (ps[3] == undefined || ps[3] < 0 || ps[3] > 1)
-        return errMesage("Loss: 0 < loss < 1", defValue, paramsElement);
-    paramsElement.style.backgroundColor = "";
-    return ps;
-}
-
-function errMesage(mes: string, defValue: any, el: HTMLInputElement) {
-    alert (mes);
-    el.style.backgroundColor = "pink";
-    return defValue;
-}
-
-function getOscilParams(): [number, number, number, number]
-{
-    const defValue: [number, number, number, number] = [1, 100, 0, 0];
-    const paramsElement = (document.getElementById("oscilParams") as HTMLInputElement)!;
-    let ps: [number, number, number, number];
- 
-    try {
-        ps = (new Function("", 
-            "let amp, q, vx, la;" + 
-            paramsElement.value +
-            "; return [amp, q, vx, la]" )
-        )();
-        } catch {
-        return errMesage("Grammar error", defValue, paramsElement);
-    }
-    // перевірки
-    if (ps[0] == undefined) 
-        return errMesage("Amplitude (amp) is undefined", defValue, paramsElement);
-    if (ps[1] == undefined && ps[3] == undefined)
-        return errMesage("Wave number (q) and Wave length (la) are undefined", defValue, paramsElement);
-    if (ps[2] == undefined)
-        return errMesage("Hor velocity (vx) is undefined", defValue, paramsElement);
-    paramsElement.style.backgroundColor = "";
-    return ps;
-}
-
-function getReceiverParams() {
-    const defValue = 0;
-    const paramsElement = (document.getElementById("recieverParams") as HTMLInputElement)!;
-    let loss: number;
- 
-    try {
-        loss = (new Function("", 
-             "let loss;" + 
-            paramsElement.value +
-            "; return loss;"
-        ))();
-        } catch {
-        return errMesage("Grammar error", defValue, paramsElement);
-    }
-    // перевірки
-    if (loss == undefined || loss < 0 || loss > 1) 
-        return errMesage("Loss: 0 <= loss <= 1", defValue, paramsElement);
-    paramsElement.style.backgroundColor = "";
-    return loss;
-}
-
-
-
