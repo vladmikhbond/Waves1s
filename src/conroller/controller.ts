@@ -19,8 +19,8 @@ export default class Controller {
     space: Space
     view: View
 
-    constructor() {
-        this.space = createSpace();
+    constructor() {        
+        this.space = new Space(...getSpaceParams()); 
         this.initCanvases();
         this.view = new View(this.space); 
         this.addListeners();
@@ -35,8 +35,9 @@ export default class Controller {
         canvasBG.height = 500;  
     } 
 
-    addListeners() {
-
+    addListeners() 
+    {
+        // Run-Stop button
         document.getElementById("runButton")!.addEventListener("click", () => {
             if (timer) 
                 this.stop(); 
@@ -44,6 +45,7 @@ export default class Controller {
                 this.run();
         });
 
+        // Key 'S' to do only one step
         document.addEventListener("keydown", (e: KeyboardEvent) => {
             if (e.key == "s" || e.key == "і" ) {
                 stop();
@@ -52,13 +54,13 @@ export default class Controller {
             }
         });
 
-       // params changed 
-        document.getElementById("params")!.addEventListener("keydown", (e: KeyboardEvent) => {
-
+        // params changed 
+        document.getElementById("spaceParams")!.addEventListener("keydown", (e: KeyboardEvent) => 
+        {
             if (e.key == "Enter") {
                 document.getElementById("s_range")!.focus();
                 this.stop();
-                const [size,  margin, k,  loss] = getParams();
+                const [size,  margin, k,  loss] = getSpaceParams();
                 
                 if (this.space.size != size || this.space.margin != margin) {
                     // new space
@@ -78,13 +80,27 @@ export default class Controller {
                 } 
                 this.view.show();
             }
-        });             
+        });   
+        
+        document.getElementById("oscilParams")!.addEventListener("keydown", (e: KeyboardEvent) => 
+        {
+            if (e.key == "Enter") {
+                getOscilParams();
+            }
+        }); 
 
+        document.getElementById("recieverParams")!.addEventListener("keydown", (e: KeyboardEvent) => 
+        {
+            if (e.key == "Enter") {
+                getReceiverParams();
+            }
+        }); 
+
+        // canvas_mousedown
         document.getElementById("canvas")!.addEventListener("mousedown", (e: MouseEvent) => {
 
             const x = e.offsetX;
             const [ampl, q, vx, lambda] = getOscilParams();  
-
 
             if (e.button == 2) {
                 this.space.deleteAt(x);
@@ -154,7 +170,7 @@ export default class Controller {
         }       
     }
 
-    // ------------------- Methods -------------------
+    // ------------------- Time methods -------------------
 
     step() {
         this.space.step();  
@@ -178,52 +194,90 @@ export default class Controller {
 
 }
 
-// --------------- free funcs
+// --------------- params suit ------------------
 
-function getParams() {
-    const el = (document.getElementById("params") as HTMLInputElement)!;
-    let f;
+function getSpaceParams(): [number, number, number, number]
+{
+    const defValue: [number, number, number, number] = [500, 200, 0.99, 0];
+    const paramsElement = (document.getElementById("spaceParams") as HTMLInputElement)!;
+    let ps: [number, number, number, number];
     try {
-        f = new Function("", 
+        ps = (new Function("", 
             "let size, margin, k, loss;" + 
-            el.value + 
+            paramsElement.value + 
             "; return [size, margin, k,  loss]" 
-        );
+        ))();
     } catch {
-        el.style.backgroundColor = "pink";
-        return [500, 200, 0.99, 0]
+        return errMesage("Grammar error", defValue, paramsElement);
     }
+    // перевірки
+    if (ps[0] == undefined || ps[0] < 100) 
+        return errMesage("Size must by >= 100", defValue, paramsElement);
 
-    const [size,  margin, k,  loss] = f!();
-    // params are OK  
-    if (size != undefined &&  margin != undefined &&  k != undefined && loss != undefined) {
-        el.style.backgroundColor = "white";
-        return [size, margin, k,  loss];
-    }
-    // params are wrong
-    el.style.backgroundColor = "pink";
-    return [500, 200, 0.99, 0];    
+    if (ps[1] == undefined || ps[1] < 0 || ps[1] > ps[0] / 2 )
+        return errMesage("Margin: 0 < margin < size/2", defValue, paramsElement);
+
+    if (ps[2] == undefined || ps[2] < 0 || ps[2] > 1)
+        return errMesage("K: 0 < k < 1", defValue, paramsElement);
+
+    if (ps[3] == undefined || ps[3] < 0 || ps[3] > 1)
+        return errMesage("Loss: 0 < loss < 1", defValue, paramsElement);
+    paramsElement.style.backgroundColor = "";
+    return ps;
 }
 
-function getOscilParams() {
-    const f = new Function("", 
-        "let amp = 1,  q =0, vx=1/2, la=0 ;" + 
-        (document.getElementById("oscilParams") as HTMLInputElement)!.value +
-        "; return [amp, q, vx, la]" );
+function errMesage(mes: string, defValue: any, el: HTMLInputElement) {
+    alert (mes);
+    el.style.backgroundColor = "pink";
+    return defValue;
+}
 
-        return f()
+function getOscilParams(): [number, number, number, number]
+{
+    const defValue: [number, number, number, number] = [1, 100, 0, 0];
+    const paramsElement = (document.getElementById("oscilParams") as HTMLInputElement)!;
+    let ps: [number, number, number, number];
+ 
+    try {
+        ps = (new Function("", 
+            "let amp, q, vx, la;" + 
+            paramsElement.value +
+            "; return [amp, q, vx, la]" )
+        )();
+        } catch {
+        return errMesage("Grammar error", defValue, paramsElement);
+    }
+    // перевірки
+    if (ps[0] == undefined) 
+        return errMesage("Amplitude (amp) is undefined", defValue, paramsElement);
+    if (ps[1] == undefined && ps[3] == undefined)
+        return errMesage("Wave number (q) and Wave length (la) are undefined", defValue, paramsElement);
+    if (ps[2] == undefined)
+        return errMesage("Hor velocity (vx) is undefined", defValue, paramsElement);
+    paramsElement.style.backgroundColor = "";
+    return ps;
 }
 
 function getReceiverParams() {
-    const f = new Function("", 
-        "let loss = 0.5;" + 
-        (document.getElementById("recieverParams") as HTMLInputElement)!.value +
-        "; return loss" );
-    return f();   
+    const defValue = 0;
+    const paramsElement = (document.getElementById("recieverParams") as HTMLInputElement)!;
+    let loss: number;
+ 
+    try {
+        loss = (new Function("", 
+             "let loss;" + 
+            paramsElement.value +
+            "; return loss;"
+        ))();
+        } catch {
+        return errMesage("Grammar error", defValue, paramsElement);
+    }
+    // перевірки
+    if (loss == undefined || loss < 0 || loss > 1) 
+        return errMesage("Loss: 0 <= loss <= 1", defValue, paramsElement);
+    paramsElement.style.backgroundColor = "";
+    return loss;
 }
 
-export function createSpace() {
-    const [size, margin, k, loss] = getParams();
-    return new Space(size, margin, k, loss);
-}
+
 
