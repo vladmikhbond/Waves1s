@@ -155,6 +155,12 @@ export default class Controller {
                     this.mode == Mode.Rec ? "inline" : "none";
         });
        
+        // helpButton
+        document.getElementById("helpButton")!.addEventListener("click", () => {
+            window.open("help.html", "_blank")?.focus();
+        });
+
+
     }
 
     // ---------------- Props -------------------
