@@ -7,7 +7,7 @@ export class Oscillator {
     amp = 0    
     ph = 0   // поточна фаза
     dph = 0  // приріст фази
-    space: Space
+    space: Space | null
     vx = 0
     
     constructor( a: number, q: number, lambda: number, vx: number, i: number, space: Space) {
@@ -34,16 +34,16 @@ export class Oscillator {
     }
 
     killself() {
-        let idx = this.space.oscillators.indexOf(this);
+        let idx = this.space!.oscillators.indexOf(this);
         if (idx != -1) {
-            this.space.oscillators.splice(idx, 1);
+            this.space!.oscillators.splice(idx, 1);
         }
     }
 }
 
 export class Mono extends Oscillator {
     
-    constructor( a: number, q: number, lambda: number, vx: number, i: number, space: Space) {
+    constructor( a: number, q: number, lambda: number, i: number, space: Space) {
         super(a, q, lambda, 0, i, space);
         this.ph = -Math.PI/2 -this.dph;
     }
@@ -58,14 +58,5 @@ export class Mono extends Oscillator {
     }
 
 
-}
-
-export class Pulse extends Mono {
-    t = 0;
-
-    step() {
-        this.killself();
-        return this.amp;
-    }
 }
 

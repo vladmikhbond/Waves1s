@@ -4,6 +4,8 @@ import Space from "../models/space.js";
 import View from "../view/view.js";
 import { scale } from "../view/view.js";
 import { getSizeParams, getSpaceParams, getOscilParams, getReceiverParams } from "./params.js";
+import { takeFocusOff, sceneToJson, restoreSceneFromJson } from "./utils.js";
+
 
 const modeElement = (document.getElementById("mode") as HTMLInputElement)!;
 const timeElement = (document.getElementById("time") as HTMLInputElement)!;
@@ -24,7 +26,9 @@ export default class Controller {
         this.space = space; 
         this.view = view;
         this.addListeners();
+        this.addDataHandlers() 
         this.initCanvases();
+
     }
 
     initCanvases() {
@@ -136,7 +140,7 @@ export default class Controller {
                     this.space.addOscillator(new Oscillator(ampl, q, lambda, vx, x, this.space));
                     break;
                 case Mode.Mon:
-                    this.space.addOscillator(new Mono(ampl, q, lambda, vx, x, this.space));
+                    this.space.addOscillator(new Mono(ampl, q, lambda, x, this.space));
                     break;
                 case Mode.Rec:
                     const ps = getReceiverParams();
@@ -183,6 +187,23 @@ export default class Controller {
 
     }
 
+    addDataHandlers() 
+    {
+        const areaEl = <HTMLTextAreaElement>document.getElementById("savedSceneText"); 
+
+        document.getElementById("saveSceneButton")!.addEventListener("click", () => {
+            areaEl.value = sceneToJson(this.space);
+        });
+
+        document.getElementById("loadSceneButton")!.addEventListener("click", () => {
+            restoreSceneFromJson(areaEl.value, this.space);
+            this.stop();
+            this.space.time = 0;
+            this.view.show();
+        });
+    }
+
+
     // ---------------- Props -------------------
     
     get mode(): Mode 
@@ -221,9 +242,3 @@ export default class Controller {
 
 }
 
-//---------------------- utils -----------------------
-
-
-function takeFocusOff() {
-    (<HTMLCanvasElement>document.getElementById("canvas")).focus();
-}
