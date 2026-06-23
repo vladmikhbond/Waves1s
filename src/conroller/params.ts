@@ -1,26 +1,30 @@
 
 type N2 = [number, number];
+type N3 = [number, number, number];
 type N4 = [number, number, number, number];
 
-export function getSizeParams(): N2 | null
+export function getSizeParams(): N3 | null
 {
     const paramsElement = (document.getElementById("sizeParams") as HTMLInputElement)!;
-    let ps: N2;
+    let ps: N3;
     try {
         ps = (new Function("", 
-            "let size, margin;" + 
+            "let W, H, ma;" + 
             paramsElement.value + 
-            "; return [size, margin]" 
+            "; return [W, H, ma]" 
         ))();
     } catch {
         return errMesage("Grammar error", paramsElement);
     }
     // перевірки
-    if (ps[0] == undefined || ps[0] < 100) 
-        return errMesage("Size must by >= 100", paramsElement);
+    if (ps[0] == undefined || ps[0] < 100 || ps[0] > 10000) 
+        return errMesage("W: (100 <= W <= 10000)", paramsElement);
 
-    if (ps[1] == undefined || ps[1] < 0 || ps[1] > ps[0] / 2 )
-        return errMesage("Margin: 0 < margin < size/2", paramsElement);
+    if (ps[1] == undefined || ps[1] < 100 || ps[1] > 10000) 
+        return errMesage("H: (100 <= H <= 10000)", paramsElement);
+
+    if (ps[2] == undefined || ps[2] < 0 || ps[2] > ps[0] / 2 )
+        return errMesage("Margin: 0 < ma < W/2", paramsElement);
 
     paramsElement.style.backgroundColor = "";
     return ps;

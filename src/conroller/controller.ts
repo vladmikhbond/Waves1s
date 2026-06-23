@@ -22,18 +22,16 @@ export default class Controller {
     space: Space
     view: View
 
-    constructor(space: Space, view: View) {  
+    constructor(space: Space, view: View, height: number) {  
         this.space = space; 
         this.view = view;
         this.addListeners();
         this.addDataHandlers() 
-        this.initCanvases();
+        this.initCanvases(space.n, height);
 
     }
 
-    initCanvases() {
-        const w = this.space.size + 2 * this.space.margin;
-        const h = 500; 
+    initCanvases(w: number, h: number) {
         
         document.documentElement.style.setProperty('--canvas-width', w+'px');
         document.documentElement.style.setProperty('--canvas-height', h+'px');
@@ -74,19 +72,20 @@ export default class Controller {
                 const ps = getSizeParams()!;
                 if (ps == null)
                     return;
-                let[size, margin] = ps;
-                this.space = new Space(size, margin, this.space.k,  this.space.loss); 
-                this.initCanvases();
-                this.view = new View(this.space);
+                // Зміна розмірів створює новий пустий модельний простір
+                let[w, h, margin] = ps;
+                this.view.space = this.space = 
+                        new Space(w, margin, this.space.k,  this.space.loss); 
+                this.initCanvases(w, h); 
                 this.view.show();
-                takeFocusOff();                                                        
+                // takeFocusOff();                                                        
             }
         });   
 
         document.getElementById("spaceParams")!.addEventListener("keydown", (e: KeyboardEvent) => 
         {
             if (e.key == "Enter") {
-                document.getElementById("s_range")!.focus();
+                // document.getElementById("s_range")!.focus();
                 this.stop();
                 const ps = getSpaceParams(); 
                 if (ps == null)
@@ -101,7 +100,7 @@ export default class Controller {
                     this.space.calm();
                 } 
                 this.view.show();
-                takeFocusOff();
+                // takeFocusOff();
             }
         });   
         

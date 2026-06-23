@@ -4,11 +4,12 @@ import Space from "./models/space.js";
 import View from "./view/view.js";
 
 // params from index.html              
-let [size, margin] = getSizeParams()!;
+let ps = getSizeParams()!;                
+let[w, h, margin] = ps;
 let [k,  loss] = getSpaceParams()!;
 
-const space = new Space(size, margin, k,  loss);
+const space = new Space(w, margin, k,  loss);
 const view = new View(space);
-new Controller(space, view);
+new Controller(space, view, h);
 
 view.show();

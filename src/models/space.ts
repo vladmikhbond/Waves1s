@@ -21,8 +21,8 @@ export default class Space {
     selNodeIdx = -1;
 
 
-    constructor(size: number, margin: number, k: number, loss: number) {
-        this.size = size;
+    constructor(w: number, margin: number, k: number, loss: number) {
+        this.size = w - 2 * margin;
         this.margin = margin;
         // спершу створити вузли
         this.nodes = new Array(this.n);
