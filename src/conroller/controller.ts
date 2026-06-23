@@ -8,7 +8,7 @@ import { takeFocusOff, sceneToJson, restoreSceneFromJson } from "./utils.js";
 
 
 const modeElement = (document.getElementById("mode") as HTMLInputElement)!;
-const timeElement = (document.getElementById("time") as HTMLInputElement)!;
+
 
 
 let timer: ReturnType<typeof setInterval> | 0 = 0;
@@ -223,7 +223,9 @@ export default class Controller {
     step() {
         this.space.step();  
         this.view.show();
-        timeElement.innerHTML = this.space.time.toString()
+        if (this.space.time % 10 === 0) {
+            this.view.showTimeAndEnergy();
+        }
     }
 
     stop() {

@@ -1,6 +1,3 @@
-
-
-
 import { Mono, Oscillator} from "../models/oscillator";
 import Receiver from "../models/receiver";
 import Space from "../models/space";

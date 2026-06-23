@@ -1,6 +1,9 @@
 import Space from "../models/space.js";
 import {Node} from "../models/space.js";
 
+const timeEl = document.getElementById("time")!;
+const infoEl = document.getElementById("info")!;
+
 export let scale = { shift: 100, velo: 1000 };
 
 export default class View {
@@ -116,27 +119,32 @@ export default class View {
     }  
 
     showSelObject() {
-        const energyStr  = `....Σ = ${this.space.energy().toFixed(6)}`;
+        
 
-        const el = document.getElementById("info")!;
+
         const idx = this.space.selNodeIdx;
         if (idx == -1) return
         let osc = this.space.getOscillatorAt(idx);
         if (osc) {
             const grad = Math.round((osc.ph % (2*Math.PI))*360/(2*Math.PI)); 
-            el.innerHTML = `osc: #${osc.i}:  amp=${osc.amp.toFixed(1)} ph=${grad}°; ${energyStr}`;
+            infoEl.innerHTML = `osc: #${osc.i}:  amp=${osc.amp.toFixed(1)} ph=${grad}°`;
             return;
         } 
         let rec = this.space.getReceiverAt(idx);
         if (rec) {
-            el.innerHTML = `rec: #${rec.i}:  energy=${rec.energy.toFixed(5)};  ${energyStr}`;
+            infoEl.innerHTML = `rec: #${rec.i}:  energy=${rec.energy.toFixed(5)}`;
             return;
         } 
         let node = this.space.nodes[idx];
         if (node) {
-            el.innerHTML = `node: #${idx}:  u=${node.u.toFixed(3)} v=${node.v.toFixed(4)};  ${energyStr}`;
+            infoEl.innerHTML = `node: #${idx}:  u=${node.u.toFixed(3)} v=${node.v.toFixed(4)}`;
         }
     }
+
+    // -----------------------------------------------------
+    showTimeAndEnergy() {   
+        timeEl.innerHTML = `T=${this.space.time} &nbsp;&nbsp; E=${this.space.energy().toFixed(4)}`;
+    }      
 
 }
 

@@ -1,5 +1,6 @@
 todo
-
+розмір W, H, ma
+help
 
 підручники (vpn)
 https://fizikaguap.ru/wp-content/uploads/2021/04/phys52016-disp.pdf
