@@ -3,7 +3,7 @@ import Receiver from "../models/receiver.js";
 import Space from "../models/space.js";
 import View from "../view/view.js";
 import { scale } from "../view/view.js";
-import { getSpaceParams, getOscilParams, getReceiverParams } from "./params.js";
+import { getSizeParams, getSpaceParams, getOscilParams, getReceiverParams } from "./params.js";
 
 const modeElement = (document.getElementById("mode") as HTMLInputElement)!;
 const timeElement = (document.getElementById("time") as HTMLInputElement)!;
@@ -20,20 +20,26 @@ export default class Controller {
     space: Space
     view: View
 
-    constructor() {        
-        this.space = new Space(...getSpaceParams()); 
-        this.initCanvases();
-        this.view = new View(this.space); 
+    constructor(space: Space, view: View) {  
+        this.space = space; 
+        this.view = view;
         this.addListeners();
+        this.initCanvases();
     }
 
     initCanvases() {
+        const w = this.space.size + 2 * this.space.margin;
+        const h = 500; 
+        
+        document.documentElement.style.setProperty('--canvas-width', w+'px');
+        document.documentElement.style.setProperty('--canvas-height', h+'px');
         const canvas = (document.getElementById("canvas") as HTMLCanvasElement)!;
         const canvasBG = (document.getElementById("canvasBG") as HTMLCanvasElement)!;
-        canvas.width = this.space.size + 2 * this.space.margin;
-        canvas.height = 500;
-        canvasBG.width = this.space.size + 2 * this.space.margin;
-        canvasBG.height = 500;  
+        canvas.width = w;
+        canvas.height = h;
+        canvasBG.width = w;
+        canvasBG.height = h;  
+        this.view.backgroundPrepare();
     } 
 
     addListeners() 
@@ -56,21 +62,32 @@ export default class Controller {
         });
 
         // params changed 
+
+        document.getElementById("sizeParams")!.addEventListener("keydown", (e: KeyboardEvent) => 
+        {
+            if (e.key == "Enter") {
+                this.stop();
+                const ps = getSizeParams()!;
+                if (ps == null)
+                    return;
+                let[size, margin] = ps;
+                this.space = new Space(size, margin, this.space.k,  this.space.loss); 
+                this.initCanvases();
+                this.view = new View(this.space);
+                this.view.show();
+                takeFocusOff();                                                        
+            }
+        });   
+
         document.getElementById("spaceParams")!.addEventListener("keydown", (e: KeyboardEvent) => 
         {
             if (e.key == "Enter") {
                 document.getElementById("s_range")!.focus();
                 this.stop();
-                const [size,  margin, k,  loss] = getSpaceParams();
-                
-                if (this.space.size != size || this.space.margin != margin) {
-                    // new space
-                    this.space = new Space(size,  margin, k,  loss); 
-                    this.initCanvases();
-                    this.view = new View(this.space);
-                    this.view.show();
-                    return;
-                }                                            
+                const ps = getSpaceParams(); 
+                if (ps == null)
+                    return;   
+                let[k, loss] = ps;                                        
                 if (this.space.k != k || this.space.loss != loss) {
                     // new params
                     this.space.k = k;
@@ -80,6 +97,7 @@ export default class Controller {
                     this.space.calm();
                 } 
                 this.view.show();
+                takeFocusOff();
             }
         });   
         
@@ -101,7 +119,7 @@ export default class Controller {
         document.getElementById("canvas")!.addEventListener("mousedown", (e: MouseEvent) => {
 
             const x = e.offsetX;
-            const [ampl, q, vx, lambda] = getOscilParams();  
+            const [ampl, q, vx, lambda] = getOscilParams()!;  
 
             if (e.button == 2) {
                 this.space.deleteAt(x);
@@ -121,8 +139,10 @@ export default class Controller {
                     this.space.addOscillator(new Mono(ampl, q, lambda, vx, x, this.space));
                     break;
                 case Mode.Rec:
-                    const loss = getReceiverParams();
-                    this.space.addReceiver(new Receiver(x, loss, this.space));
+                    const ps = getReceiverParams();
+                    if (ps) {
+                        this.space.addReceiver(new Receiver(x, ps[0], this.space));
+                    }
                     break;
                 case Mode.Sto: 
                     this.space.nodes[x].is_stone = true;
@@ -199,4 +219,11 @@ export default class Controller {
         timer = setInterval(() => this.step(), 10);
     }
 
+}
+
+//---------------------- utils -----------------------
+
+
+function takeFocusOff() {
+    (<HTMLCanvasElement>document.getElementById("canvas")).focus();
 }

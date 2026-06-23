@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vawes1s</title>
+    <title>Vawes1d</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <main class="container">
+    <div class="container">
         <h1>
-            Vawes 1s 
+            Vawes 1d 
             <span id="time"></span> 
             <span id="info"> </span> 
         </h1>
-        <div>
-            <input id="spaceParams" type="text" value="size=800; margin=200;  k=0.99; loss=0.0" >
+        <!------------------ top panel ---------------->
+        <section>
+
+            <input id="sizeParams" type="text" value="size=800; margin=200">
+            <input id="spaceParams" type="text" value="k=0.99; loss=0.0" >
             
             <select id="mode" aria-label="Select" required>
                 <option value="Inf" >Inf</option>
@@ -30,19 +33,31 @@
             <input id="recieverParams" type="text" value="loss=0.5" style="display: none;">
 
             <button id="runButton">Run</button>
-            <button id="helpButton" title="Help" class="outline">H</button>
+            <button id="helpButton" title="Help" class="outline">H</button>     
+        </section>
 
+        <section>
+            <label> Velo
             <input id="is_velo_visible" type="checkbox" title="Is velo visible."/>      
-        </div>
-        <div>
+            </label>
             Amp <input id="s_range" type="range"  min="0", max="1000" value="100"/>
             Velo <input id="v_range" type="range"  min="0", max="10000" value="1000"/>
-        </div>
-
+        </section>
+ 
+        <!-- ------------------canvases------------------  -->
         <div class="canvas-frame">
-            <canvas id="canvas"></canvas>
+            <canvas id="canvas" tabindex="0"></canvas>
             <canvas id="canvasBG" ></canvas>
         </div>
+
+        <!-- ------------------bottom panel------------------  -->
+        <div class="bottom-panel">
+            <button id="saveSceneButton" class="scene-btn" title="Export scene">⬇</button>
+            <textarea id="savedSceneText" rows="1" class="scene-textarea"></textarea>
+            <button id="loadSceneButton" class="scene-btn" title="Import scene">⬆</button>
+        </div>
+ 
+
 
     </main>
     <script type="module" src="main.js"></script>

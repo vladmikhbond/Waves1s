@@ -1,38 +1,58 @@
-export function getSpaceParams(): [number, number, number, number]
+
+type N2 = [number, number];
+type N4 = [number, number, number, number];
+
+export function getSizeParams(): N2 | null
 {
-    const defValue: [number, number, number, number] = [500, 200, 0.99, 0];
-    const paramsElement = (document.getElementById("spaceParams") as HTMLInputElement)!;
-    let ps: [number, number, number, number];
+    const paramsElement = (document.getElementById("sizeParams") as HTMLInputElement)!;
+    let ps: N2;
     try {
         ps = (new Function("", 
-            "let size, margin, k, loss;" + 
+            "let size, margin;" + 
             paramsElement.value + 
-            "; return [size, margin, k,  loss]" 
+            "; return [size, margin]" 
         ))();
     } catch {
-        return errMesage("Grammar error", defValue, paramsElement);
+        return errMesage("Grammar error", paramsElement);
     }
     // перевірки
     if (ps[0] == undefined || ps[0] < 100) 
-        return errMesage("Size must by >= 100", defValue, paramsElement);
+        return errMesage("Size must by >= 100", paramsElement);
 
     if (ps[1] == undefined || ps[1] < 0 || ps[1] > ps[0] / 2 )
-        return errMesage("Margin: 0 < margin < size/2", defValue, paramsElement);
+        return errMesage("Margin: 0 < margin < size/2", paramsElement);
 
-    if (ps[2] == undefined || ps[2] < 0 || ps[2] > 1)
-        return errMesage("K: 0 < k < 1", defValue, paramsElement);
-
-    if (ps[3] == undefined || ps[3] < 0 || ps[3] > 1)
-        return errMesage("Loss: 0 < loss < 1", defValue, paramsElement);
     paramsElement.style.backgroundColor = "";
     return ps;
 }
 
-export function getOscilParams(): [number, number, number, number]
+export function getSpaceParams(): N2 | null
 {
-    const defValue: [number, number, number, number] = [1, 100, 0, 0];
+    const paramsElement = (document.getElementById("spaceParams") as HTMLInputElement)!;
+    let ps: N2;
+    try {
+        ps = (new Function("", 
+            "let k, loss;" + 
+            paramsElement.value + 
+            "; return [k,  loss]" 
+        ))();
+    } catch {
+        return errMesage("Grammar error", paramsElement);
+    }
+    // перевірки
+    if (ps[0] == undefined || ps[0] < 0 || ps[0] > 1)
+        return errMesage("K: 0 < k < 1", paramsElement);
+
+    if (ps[1] == undefined || ps[1] < 0 || ps[1] > 1)
+        return errMesage("Loss: 0 < loss < 1", paramsElement);
+    paramsElement.style.backgroundColor = "";
+    return ps;
+}
+
+export function getOscilParams(): N4 | null
+{
     const paramsElement = (document.getElementById("oscilParams") as HTMLInputElement)!;
-    let ps: [number, number, number, number];
+    let ps: N4;
  
     try {
         ps = (new Function("", 
@@ -41,43 +61,42 @@ export function getOscilParams(): [number, number, number, number]
             "; return [amp, q, vx, la]" )
         )();
         } catch {
-        return errMesage("Grammar error", defValue, paramsElement);
+        return errMesage("Grammar error", paramsElement);
     }
     // перевірки
     if (ps[0] == undefined) 
-        return errMesage("Amplitude (amp) is undefined", defValue, paramsElement);
+        return errMesage("Amplitude (amp) is undefined", paramsElement);
     if (ps[1] == undefined && ps[3] == undefined)
-        return errMesage("Wave number (q) and Wave length (la) are undefined", defValue, paramsElement);
+        return errMesage("Wave number (q) and Wave length (la) are undefined", paramsElement);
     if (ps[2] == undefined)
-        return errMesage("Hor velocity (vx) is undefined", defValue, paramsElement);
+        return errMesage("Hor velocity (vx) is undefined", paramsElement);
     paramsElement.style.backgroundColor = "";
     return ps;
 }
 
-export function getReceiverParams() {
-    const defValue = 0;
+export function getReceiverParams(): [number] | null {
     const paramsElement = (document.getElementById("recieverParams") as HTMLInputElement)!;
-    let loss: number;
- 
+    let ps: [number];
+
     try {
-        loss = (new Function("", 
+        ps = (new Function("", 
              "let loss;" + 
             paramsElement.value +
-            "; return loss;"
+            "; return [loss];"
         ))();
         } catch {
-        return errMesage("Grammar error", defValue, paramsElement);
+        return errMesage("Grammar error", paramsElement);
     }
     // перевірки
-    if (loss == undefined || loss < 0 || loss > 1) 
-        return errMesage("Loss: 0 <= loss <= 1", defValue, paramsElement);
+    if (ps[0] == undefined || ps[0] < 0 || ps[0] > 1) 
+        return errMesage("Loss: 0 <= loss <= 1", paramsElement);
     paramsElement.style.backgroundColor = "";
-    return loss;
+    return ps;
 }
 
 
-function errMesage(mes: string, defValue: any, el: HTMLInputElement) {
+function errMesage(mes: string, el: HTMLInputElement) {
     alert (mes);
     el.style.backgroundColor = "pink";
-    return defValue;
+    return null;
 }
