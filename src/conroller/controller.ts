@@ -77,15 +77,13 @@ export default class Controller {
                 this.view.space = this.space = 
                         new Space(w, margin, this.space.k,  this.space.loss); 
                 this.initCanvases(w, h); 
-                this.view.show();
-                // takeFocusOff();                                                        
+                this.view.show();                                                     
             }
         });   
 
         document.getElementById("spaceParams")!.addEventListener("keydown", (e: KeyboardEvent) => 
         {
             if (e.key == "Enter") {
-                // document.getElementById("s_range")!.focus();
                 this.stop();
                 const ps = getSpaceParams(); 
                 if (ps == null)
@@ -100,7 +98,6 @@ export default class Controller {
                     this.space.calm();
                 } 
                 this.view.show();
-                // takeFocusOff();
             }
         });   
         
@@ -157,11 +154,12 @@ export default class Controller {
             this.view.show();
         });
 
-        document.getElementById("is_velo_visible")!.addEventListener("change", (e) => {
-            this.view.show();
-        });
+        // document.getElementById("is_velo_visible")!.addEventListener("change", (e) => {
+        //     this.view.show();
+        // });
 
         document.getElementById("s_range")!.addEventListener("change", (e) => {
+
             scale.shift = +(e.target as HTMLInputElement).value;
             this.view.show();
         });

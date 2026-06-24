@@ -22,8 +22,8 @@ export default class View {
 
     get is_velo_visible(): boolean
     {
-        const stateElem = document.getElementById("is_velo_visible") as HTMLInputElement;
-        return stateElem.checked;      
+        const stateElem = document.getElementById("v_range") as HTMLInputElement;
+        return stateElem.value != "0";    
     }
 
     backgroundPrepare() {

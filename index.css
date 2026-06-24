@@ -44,7 +44,8 @@ input[type="checkbox"] {
 }
 
 input[type="text"] {
-    width: 300px;
+    width: 250px;
+    padding: 8px;
 }
 
 select {
