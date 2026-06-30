@@ -119,9 +119,6 @@ export default class View {
     }  
 
     showSelObject() {
-        
-
-
         const idx = this.space.selNodeIdx;
         if (idx == -1) return
         let osc = this.space.getOscillatorAt(idx);
@@ -141,7 +138,6 @@ export default class View {
         }
     }
 
-    // -----------------------------------------------------
     showTimeAndEnergy() {   
         timeEl.innerHTML = `T=${this.space.time} &nbsp;&nbsp; E=${this.space.energy().toFixed(4)}`;
     }      

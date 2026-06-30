@@ -2,10 +2,7 @@ import { Mono, Oscillator} from "../models/oscillator";
 import Receiver from "../models/receiver";
 import Space from "../models/space";
 import { Node } from "../models/space";
- 
-export function takeFocusOff() {
-    (<HTMLCanvasElement>document.getElementById("canvas")).focus();
-}
+
 
 // Зберігає поточний стан об'єкта space в форматі JSON.
 export function sceneToJson(space: Space): string {

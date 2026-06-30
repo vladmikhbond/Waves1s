@@ -4,12 +4,10 @@ import Space from "../models/space.js";
 import View from "../view/view.js";
 import { scale } from "../view/view.js";
 import { getSizeParams, getSpaceParams, getOscilParams, getReceiverParams } from "./params.js";
-import { takeFocusOff, sceneToJson, restoreSceneFromJson } from "./utils.js";
+import { sceneToJson, restoreSceneFromJson } from "./utils.js";
 
 
 const modeElement = (document.getElementById("mode") as HTMLInputElement)!;
-
-
 
 let timer: ReturnType<typeof setInterval> | 0 = 0;
 
