@@ -1,31 +1,11 @@
 :root {
     --canvas-width: 800px;
     --canvas-height: 600px;
-    --element-height: 50px;
+    --element-height: 44px;
 }
-
-
-
-/* #mode {
-    display: inline;
-    width: 120px;
-}
-
-input[type=range] {
-    width: 400px;
-    margin-right: 20px;
-}
-
-#spaceParams {
-    width: 450px;
-}
-#oscilParams, #recieverParams {
-    width: 300px;
-} */
 
 /* <!------------------ top panel ----------------> */
 input[type="text"],
-input[type="range"],
 select,
 button {
     vertical-align: top;
@@ -33,10 +13,17 @@ button {
     margin-bottom: 0;
     height: var(--element-height);
 }
-select,
+
 button {
     background-color: rgb(42, 111, 113);
     padding-top: 8px;
+}
+
+select {
+    background-color: rgb(42, 111, 113);
+    padding: 4px;
+    width: 140px;
+    color: white;
 }
 
 input[type="checkbox"] {
@@ -44,13 +31,13 @@ input[type="checkbox"] {
 }
 
 input[type="text"] {
-    width: 250px;
-    padding: 8px;
+    width: calc(var(--canvas-width) - 225px);
+    padding: 10px;
+    text-align: center;
 }
 
-select {
-    width: 120px;
-    color: white;
+input[type="range"] {
+    width: calc((var(--canvas-width) - 220px) / 2);
 }
 
 input[type="range"] {
@@ -98,19 +85,26 @@ section {
     z-index: 1;
 }
 
-/* <!------------------ bottom panel ----------------> */
+/* ------------------ bottom panel ---------------- */
 .bottom-panel {
-   margin-top: 4px;
-   width: var(--canvas-width);
+   margin-top: 8px;
 } 
 
-.scene-textarea {
+.scene-select {
     display: inline; 
     height: var(--element-height);
-    width: calc(var(--canvas-width) - 154px);
+    width: calc(var(--canvas-width) - 305px);
+}
+.scene-name {
+    display: inline; 
+    width: 150px !important;
 }
 .scene-btn {
     vertical-align: top; 
     background-color: lightblue;
     width: 70px;
+}
+
+textarea {
+     width: calc(var(--canvas-width));
 }

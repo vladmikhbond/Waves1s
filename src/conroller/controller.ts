@@ -3,7 +3,7 @@ import Receiver from "../models/receiver.js";
 import Space from "../models/space.js";
 import View from "../view/view.js";
 import { scale } from "../view/view.js";
-import { getSizeParams, getSpaceParams, getOscilParams, getReceiverParams } from "./params.js";
+import { getParams } from "./params.js";
 import { sceneToJson, restoreSceneFromJson } from "./utils.js";
 
 
@@ -23,8 +23,8 @@ export default class Controller {
     constructor(space: Space, view: View, height: number) {  
         this.space = space; 
         this.view = view;
-        this.addListeners();
-        this.addDataHandlers() 
+        this.addHandlers();
+        this.addDataHandlers();
         this.initCanvases(space.n, height);
 
     }
@@ -42,7 +42,7 @@ export default class Controller {
         this.view.backgroundPrepare();
     } 
 
-    addListeners() 
+    addHandlers() 
     {
         // Run-Stop button
         document.getElementById("runButton")!.addEventListener("click", () => {
@@ -63,84 +63,68 @@ export default class Controller {
 
         // params changed 
 
-        document.getElementById("sizeParams")!.addEventListener("keydown", (e: KeyboardEvent) => 
+        document.getElementById("infoParams")!.addEventListener("keydown", (e: KeyboardEvent) => 
         {
             if (e.key == "Enter") {
                 this.stop();
-                const ps = getSizeParams()!;
-                if (ps == null)
-                    return;
+                const ps = getParams("infoParams");  // "w: 1400, h: 600, ma: 200, k: 0.99, loss: 0.0"
+                
                 // Зміна розмірів створює новий пустий модельний простір
-                let[w, h, margin] = ps;
-                this.view.space = this.space = 
-                        new Space(w, margin, this.space.k,  this.space.loss); 
-                this.initCanvases(w, h); 
-                this.view.show();                                                     
-            }
-        });   
-
-        document.getElementById("spaceParams")!.addEventListener("keydown", (e: KeyboardEvent) => 
-        {
-            if (e.key == "Enter") {
-                this.stop();
-                const ps = getSpaceParams(); 
-                if (ps == null)
-                    return;   
-                let[k, loss] = ps;                                        
-                if (this.space.k != k || this.space.loss != loss) {
+                if (this.view.canvas.width != ps.w || this.view.canvas.height != ps.h) {
+                    this.view.space = this.space = new Space(ps.w, ps.ma, this.space.k,  this.space.loss);         
+                    this.initCanvases(ps.w, ps.h);
+                }
+                // Зміна парамтрів простору
+                if (this.space.k != ps.k || this.space.loss != ps.loss) {
                     // new params
-                    this.space.k = k;
-                    this.space.loss = loss;
+                    this.space.k = ps.k;
+                    this.space.loss = ps.loss;
                 } else {
                     // just calm
                     this.space.calm();
                 } 
-                this.view.show();
+                this.view.show();                                                     
             }
-        });   
+        });    
         
-        document.getElementById("oscilParams")!.addEventListener("keydown", (e: KeyboardEvent) => 
-        {
-            if (e.key == "Enter") {
-                getOscilParams();
-            }
-        }); 
+        // document.getElementById("oscilParams")!.addEventListener("keydown", (e: KeyboardEvent) => 
+        // {
+        //     if (e.key == "Enter") {
+        //         getOscilParams();
+        //     }
+        // }); 
 
-        document.getElementById("recieverParams")!.addEventListener("keydown", (e: KeyboardEvent) => 
-        {
-            if (e.key == "Enter") {
-                getReceiverParams();
-            }
-        }); 
+        // document.getElementById("recieverParams")!.addEventListener("keydown", (e: KeyboardEvent) => 
+        // {
+        //     if (e.key == "Enter") {
+        //         getReceiverParams();
+        //     }
+        // }); 
 
         // canvas_mousedown
         document.getElementById("canvas")!.addEventListener("mousedown", (e: MouseEvent) => {
 
             const x = e.offsetX;
-            const [ampl, q, vx, lambda] = getOscilParams()!;  
-
             if (e.button == 2) {
                 this.space.deleteAt(x);
                 this.view.show();
                 return;
             }
-
+            const ps = getParams("oscilParams");  // "amp: 1, la: 100, vx: 0"
             switch (this.mode) {
                 case Mode.Inf:
                     this.space.selNodeIdx = x;
                     this.view.showSelObject();
                     break;
-                case Mode.Osc:
-                    this.space.addOscillator(new Oscillator(ampl, q, lambda, vx, x, this.space));
+                case Mode.Osc:                    
+                    this.space.addOscillator(new Oscillator(ps.amp, ps.q, ps.la, ps.vx, x, this.space));
                     break;
                 case Mode.Mon:
-                    this.space.addOscillator(new Mono(ampl, q, lambda, x, this.space));
+                    this.space.addOscillator(new Mono(ps.amp, ps.q, ps.la, x, this.space));
                     break;
                 case Mode.Rec:
-                    const ps = getReceiverParams();
-                    if (ps) {
-                        this.space.addReceiver(new Receiver(x, ps[0], this.space));
-                    }
+                    const params = getParams("recieverParams");  // "loss: 0.5"
+                    this.space.addReceiver(new Receiver(x, params.loss, this.space));
                     break;
                 case Mode.Sto: 
                     this.space.nodes[x].is_stone = true;
@@ -151,10 +135,6 @@ export default class Controller {
             }
             this.view.show();
         });
-
-        // document.getElementById("is_velo_visible")!.addEventListener("change", (e) => {
-        //     this.view.show();
-        // });
 
         document.getElementById("s_range")!.addEventListener("change", (e) => {
 
@@ -168,10 +148,23 @@ export default class Controller {
         });
 
         document.getElementById("mode")!.addEventListener("change", (e) => {
-            document.getElementById("oscilParams")!.style.display = 
-                    this.mode == Mode.Osc || this.mode == Mode.Mon ? "inline" : "none";
-            document.getElementById("recieverParams")!.style.display = 
-                    this.mode == Mode.Rec ? "inline" : "none";
+            let infoParams = document.getElementById("infoParams")!.style;
+            let oscilParams = document.getElementById("oscilParams")!.style;
+            let recieverParams = document.getElementById("recieverParams")!.style;
+
+            infoParams.display = oscilParams.display = recieverParams.display = "none";
+
+            switch(this.mode) {
+                case Mode.Inf:
+                    infoParams.display = "inline";
+                    break;
+                case Mode.Osc, Mode.Mon:
+                    oscilParams.display = "inline";
+                    break;
+                case Mode.Rec:
+                    recieverParams.display = "inline";
+                    break;
+            }
         });
        
         // helpButton
@@ -182,21 +175,60 @@ export default class Controller {
 
     }
 
+
+    // повертає серіалізовану модель у вигляді рядку JSON
+    getCurrentModelAsJson(): string {
+        return sceneToJson(this.space);
+    }
+
+
+    // оновлює модель з рядку JSON
+    setCurrentModelWithJson(jsonStr: string ) {
+        restoreSceneFromJson(jsonStr, this.space);
+        this.stop();
+        this.space.time = 0;
+        this.view.show();
+    }
+
+
     addDataHandlers() 
     {
+        const sceneSelect = <HTMLSelectElement>document.getElementById("sceneSelect");
+        const sceneName = <HTMLInputElement>document.getElementById("sceneName");
+        const saveSceneButton = <HTMLButtonElement>document.getElementById("saveSceneButton");
+        const removeSceneButton = <HTMLButtonElement>document.getElementById("removeSceneButton");
+
         const areaEl = <HTMLTextAreaElement>document.getElementById("savedSceneText"); 
 
-        document.getElementById("saveSceneButton")!.addEventListener("click", () => {
+        saveSceneButton.addEventListener("click", () => {
             areaEl.value = sceneToJson(this.space);
         });
 
-        document.getElementById("loadSceneButton")!.addEventListener("click", () => {
-            restoreSceneFromJson(areaEl.value, this.space);
-            this.stop();
-            this.space.time = 0;
-            this.view.show();
+        removeSceneButton.addEventListener("click", () => {
+            areaEl.value = "";
+        });
+
+        sceneSelect.addEventListener("click", () => {
+            this.setCurrentModelWithJson(areaEl.value);
+
         });
     }
+
+    // addDataHandlers() 
+    // {
+    //     const areaEl = <HTMLTextAreaElement>document.getElementById("savedSceneText"); 
+
+    //     document.getElementById("saveSceneButton")!.addEventListener("click", () => {
+    //         areaEl.value = sceneToJson(this.space);
+    //     });
+
+    //     document.getElementById("loadSceneButton")!.addEventListener("click", () => {
+    //         restoreSceneFromJson(areaEl.value, this.space);
+    //         this.stop();
+    //         this.space.time = 0;
+    //         this.view.show();
+    //     });
+    // }
 
 
     // ---------------- Props -------------------
